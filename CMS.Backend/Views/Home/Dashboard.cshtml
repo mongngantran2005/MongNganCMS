@@ -218,3 +218,76 @@
         </div>
     </div>
 </div>
+
+<div class="row g-4 mt-1">
+    <!-- Latest Products -->
+    <div class="col-lg-12">
+        <div class="card h-100 shadow-sm border-0">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <h6 class="mb-0 fw-bold text-dark"><i class="bi bi-box-seam text-info me-2"></i>Sản phẩm mới nhất</h6>
+                <a asp-controller="Product" asp-action="Index" class="btn btn-sm btn-outline-info">Xem tất cả</a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="border-0 px-4">Hình ảnh</th>
+                                <th class="border-0">Tên sản phẩm</th>
+                                <th class="border-0">Danh mục</th>
+                                <th class="border-0">Giá</th>
+                                <th class="border-0 text-end px-4">Tồn kho</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{ var latestProducts = ViewBag.LatestProducts as List<CMS.Data.Entities.Product>; }
+                            @if (latestProducts != null && latestProducts.Any())
+                            {
+                                foreach (var product in latestProducts)
+                                {
+                                    <tr>
+                                        <td class="px-4">
+                                            @if (!string.IsNullOrEmpty(product.ImageUrl))
+                                            {
+                                                <img src="@product.ImageUrl" alt="@product.Name" style="width:40px;height:40px;object-fit:cover;border-radius:4px;" />
+                                            }
+                                            else
+                                            {
+                                                <div style="width:40px;height:40px;background:#f1f5f9;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#94a3b8;">
+                                                    <i class="bi bi-image"></i>
+                                                </div>
+                                            }
+                                        </td>
+                                        <td class="fw-semibold text-dark">@product.Name</td>
+                                        <td>
+                                            <span class="badge bg-secondary bg-opacity-10 text-secondary">
+                                                @(product.CategoryProduct?.Name ?? "Chưa phân loại")
+                                            </span>
+                                        </td>
+                                        <td class="text-danger fw-bold">@product.Price.ToString("N0") đ</td>
+                                        <td class="text-end px-4">
+                                            @if (product.StockQuantity <= 0)
+                                            {
+                                                <span class="badge bg-danger">Hết hàng</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-success">@product.StockQuantity</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5" class="text-center py-4 text-muted">Chưa có sản phẩm nào</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

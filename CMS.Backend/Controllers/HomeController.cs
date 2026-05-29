@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace CMS.Backend.Controllers
 {
-    [Authorize]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -28,6 +27,15 @@ namespace CMS.Backend.Controllers
                 .Take(3)
                 .ToList();
 
+            // Lấy 6 sản phẩm mới nhất
+            var latestProducts = _context.Products
+                .Include(p => p.CategoryProduct)
+                .OrderByDescending(p => p.Id)
+                .Take(6)
+                .ToList();
+
+            ViewBag.LatestProducts = latestProducts;
+
             return View(latestPosts);
         }
 
@@ -36,6 +44,7 @@ namespace CMS.Backend.Controllers
             return View();
         }
 
+        [Authorize]
         public IActionResult Dashboard()
         {
             ViewBag.TotalPosts = _context.Posts.Count();
@@ -56,8 +65,15 @@ namespace CMS.Backend.Controllers
                 .Take(5)
                 .ToList();
 
+            var latestProducts = _context.Products
+                .Include(p => p.CategoryProduct)
+                .OrderByDescending(p => p.Id)
+                .Take(5)
+                .ToList();
+
             ViewBag.LatestPosts = latestPosts;
             ViewBag.LatestUsers = latestUsers;
+            ViewBag.LatestProducts = latestProducts;
 
             return View();
         }

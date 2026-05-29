@@ -21,10 +21,9 @@ namespace CMS.Backend.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-            // Nếu đã đăng nhập rồi thì chuyển hướng thẳng vào Home/Index
             if (User.Identity != null && User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Dashboard", "Home");
             }
             return View();
         }
@@ -52,7 +51,7 @@ namespace CMS.Backend.Controllers
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, 
                     new ClaimsPrincipal(claimsIdentity));
 
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Dashboard", "Home");
             }
 
             ViewBag.Error = "Tên đăng nhập hoặc mật khẩu không đúng!";
@@ -77,7 +76,7 @@ namespace CMS.Backend.Controllers
         {
             if (User.Identity != null && User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Dashboard", "Home");
             }
             return View();
         }
