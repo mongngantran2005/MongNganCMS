@@ -22,5 +22,30 @@ namespace CMS.Data
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // Cấu hình dữ liệu mẫu (Seed Data) cho bảng Users
+            modelBuilder.Entity<User>().HasData(
+                new User
+                {
+                    Id = 1,
+                    Username = "admin",
+                    PasswordHash = "admin123",
+                    FullName = "Admin CMS",
+                    Role = "Admin"
+                },
+                new User
+                {
+                    Id = 2,
+                    Username = "editor",
+                    PasswordHash = "editor123",
+                    FullName = "Editor CMS",
+                    Role = "Editor"
+                }
+            );
+        }
     }
 }
