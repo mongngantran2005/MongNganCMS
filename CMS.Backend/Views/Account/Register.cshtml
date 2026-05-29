@@ -1,12 +1,12 @@
 @{
-    Layout = null; // Trang đăng nhập độc lập
+    Layout = null; // Trang đăng ký độc lập
 }
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Đăng nhập hệ thống - MongNgan CMS</title>
+    <title>Đăng ký tài khoản mới - MongNgan CMS</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -26,7 +26,7 @@
 
         .login-container {
             width: 100%;
-            max-width: 420px;
+            max-width: 440px;
             padding: 20px;
         }
 
@@ -42,7 +42,7 @@
         }
 
         .login-header {
-            padding: 40px 30px 20px 30px;
+            padding: 40px 30px 10px 30px;
             text-align: center;
         }
 
@@ -75,16 +75,16 @@
         }
 
         .login-body {
-            padding: 20px 35px 40px 35px;
+            padding: 10px 35px 40px 35px;
         }
 
         .form-label {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             color: #94a3b8;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .input-group {
@@ -102,9 +102,9 @@
         }
 
         .input-icon {
-            padding: 12px 15px;
+            padding: 10px 14px;
             color: #64748b;
-            font-size: 16px;
+            font-size: 15px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -114,7 +114,7 @@
             flex: 1;
             background: transparent;
             border: none;
-            padding: 12px 15px 12px 0;
+            padding: 10px 14px 10px 0;
             color: #ffffff;
             font-size: 14px;
             font-weight: 500;
@@ -136,7 +136,7 @@
             letter-spacing: 0.3px;
             transition: all 0.2s ease;
             box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
-            margin-top: 10px;
+            margin-top: 15px;
         }
 
         .btn-login:hover {
@@ -159,37 +159,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .hint-container {
-            margin-top: 25px;
-            padding: 12px;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px dashed rgba(255, 255, 255, 0.06);
-            font-size: 12px;
-            color: #64748b;
-        }
-
-        .hint-title {
-            font-weight: 600;
-            color: #94a3b8;
-            margin-bottom: 4px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        .alert-success-custom {
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            color: #34d399;
-            border-radius: 12px;
-            font-size: 13px;
-            padding: 12px 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .login-footer {
@@ -217,21 +187,13 @@
         <div class="login-card">
             <div class="login-header">
                 <div class="login-logo">
-                    <i class="bi bi-layers-half"></i>
+                    <i class="bi bi-person-plus"></i>
                 </div>
-                <h1 class="login-title">MongNgan CMS</h1>
-                <p class="login-subtitle">Hệ thống quản trị nội dung website</p>
+                <h1 class="login-title">Đăng ký tài khoản</h1>
+                <p class="login-subtitle">Tạo tài khoản MongNgan CMS mới</p>
             </div>
             <div class="login-body">
-                <form asp-action="Login" method="post">
-                    @if (TempData["SuccessMessage"] != null)
-                    {
-                        <div class="alert-success-custom">
-                            <i class="bi bi-check-circle-fill"></i>
-                            <div>@TempData["SuccessMessage"]</div>
-                        </div>
-                    }
-
+                <form asp-action="Register" method="post">
                     @if (ViewBag.Error != null)
                     {
                         <div class="alert-custom">
@@ -246,31 +208,45 @@
                             <div class="input-icon">
                                 <i class="bi bi-person"></i>
                             </div>
-                            <input type="text" name="username" class="form-control-custom" placeholder="Nhập username..." required autocomplete="off" />
+                            <input type="text" name="username" class="form-control-custom" placeholder="Nhập tên đăng nhập..." required autocomplete="off" />
                         </div>
                     </div>
 
-                    <div class="mb-4">
+                    <div class="mb-3">
+                        <label class="form-label">Họ và tên</label>
+                        <div class="input-group">
+                            <div class="input-icon">
+                                <i class="bi bi-card-text"></i>
+                            </div>
+                            <input type="text" name="fullName" class="form-control-custom" placeholder="Nhập họ và tên..." required autocomplete="off" />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
                         <label class="form-label">Mật khẩu</label>
                         <div class="input-group">
                             <div class="input-icon">
                                 <i class="bi bi-lock"></i>
                             </div>
-                            <input type="password" name="password" class="form-control-custom" placeholder="Nhập mật khẩu..." required />
+                            <input type="password" name="password" class="form-control-custom" placeholder="Tạo mật khẩu..." required />
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-login w-100">ĐĂNG NHẬP HỆ THỐNG</button>
+                    <div class="mb-4">
+                        <label class="form-label">Xác nhận mật khẩu</label>
+                        <div class="input-group">
+                            <div class="input-icon">
+                                <i class="bi bi-shield-lock"></i>
+                            </div>
+                            <input type="password" name="confirmPassword" class="form-control-custom" placeholder="Nhập lại mật khẩu..." required />
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-login w-100">ĐĂNG KÝ NGAY</button>
                 </form>
 
                 <div class="login-footer">
-                    Chưa có tài khoản? <a asp-action="Register">Đăng ký ngay</a>
-                </div>
-
-                <div class="hint-container">
-                    <div class="hint-title"><i class="bi bi-info-circle"></i> Tài khoản thử nghiệm:</div>
-                    <div>Admin: <code>admin</code> / <code>admin123</code></div>
-                    <div>Editor: <code>editor</code> / <code>editor123</code></div>
+                    Đã có tài khoản? <a asp-action="Login">Đăng nhập ngay</a>
                 </div>
             </div>
         </div>

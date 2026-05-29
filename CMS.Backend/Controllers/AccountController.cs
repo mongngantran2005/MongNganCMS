@@ -71,5 +71,54 @@ namespace CMS.Backend.Controllers
         {
             return View();
         }
+
+        [HttpGet]
+        public IActionResult Register()
+        {
+            if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register(string username, string fullName, string password, string confirmPassword)
+        {
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(fullName) ||
+                string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(confirmPassword))
+            {
+                ViewBag.Error = "Vui lòng nhập đầy đủ thông tin!";
+                return View();
+            }
+
+            if (password != confirmPassword)
+            {
+                ViewBag.Error = "Mật khẩu xác nhận không trùng khớp!";
+                return View();
+            }
+
+            var existingUser = _context.Users.FirstOrDefault(u => u.Username.ToLower() == username.ToLower());
+            if (existingUser != null)
+            {
+                ViewBag.Error = "Tên đăng nhập đã tồn tại!";
+                return View();
+            }
+
+            var newUser = new CMS.Data.Entities.User
+            {
+                Username = username,
+                FullName = fullName,
+                PasswordHash = password,
+                Role = "Editor"
+            };
+
+            _context.Users.Add(newUser);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Đăng ký thành công! Hãy sử dụng tài khoản mới để đăng nhập.";
+            return RedirectToAction("Login");
+        }
     }
 }
