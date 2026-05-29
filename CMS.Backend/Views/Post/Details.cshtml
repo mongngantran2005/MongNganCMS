@@ -1,0 +1,51 @@
+@model CMS.Data.Entities.Post
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-9 col-md-11">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+                <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-arrow-left"></i> Danh sách bài viết
+                </a>
+                <div class="d-flex gap-2">
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning btn-sm text-dark fw-semibold">
+                        <i class="bi bi-pencil"></i> Sửa bài viết
+                    </a>
+                    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa bài viết này không?')">
+                        <i class="bi bi-trash"></i> Xóa
+                    </a>
+                </div>
+            </div>
+            <div class="card-body p-4 p-md-5">
+                <div class="mb-3">
+                    <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2" style="font-size: 13px;">
+                        <i class="bi bi-grid-3x3-gap-fill"></i> @(Model.Category?.Name ?? "Chưa phân loại")
+                    </span>
+                </div>
+                
+                <h1 class="display-5 fw-bold text-dark mb-3">@Model.Title</h1>
+                
+                <div class="d-flex align-items-center gap-3 text-muted mb-4 pb-3 border-bottom" style="font-size: 14px;">
+                    <div>
+                        <i class="bi bi-calendar3"></i> Ngày đăng: <strong>@Model.CreatedDate.ToString("dd/MM/yyyy HH:mm")</strong>
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    <div class="text-center mb-5 rounded overflow-hidden shadow-sm" style="max-height: 450px;">
+                        <img src="@Model.ImageUrl" class="w-100 object-fit-cover img-fluid" alt="@Model.Title" style="max-height: 450px; object-position: center;" />
+                    </div>
+                }
+
+                <div class="post-content bg-white" style="font-size: 16px; line-height: 1.8; color: #334155;">
+                    @Html.Raw(Model.Content)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

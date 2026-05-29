@@ -1,0 +1,106 @@
+@model IEnumerable<CMS.Data.Entities.User>
+
+@{
+    ViewData["Title"] = "Quản lý Thành viên";
+    var totalUsers = Model.Count();
+    var admins = Model.Count(u => u.Role == "Admin");
+    var editors = Model.Count(u => u.Role == "Editor");
+}
+
+<style>
+    .stats-strip { display: flex; gap: 16px; margin-bottom: 24px; }
+    .stat-pill { background: white; border-radius: 10px; padding: 12px 20px; box-shadow: 0 1px 6px rgba(0,0,0,0.06); display: flex; align-items: center; gap: 10px; }
+    .stat-pill i { font-size: 20px; }
+    .stat-pill .val { font-size: 20px; font-weight: 700; color: #1e293b; }
+    .stat-pill .lbl { font-size: 11px; color: #94a3b8; text-transform: uppercase; }
+    .user-card { background: white; border-radius: 12px; box-shadow: 0 1px 6px rgba(0,0,0,0.06); padding: 24px; }
+</style>
+
+<!-- Stats -->
+<div class="stats-strip">
+    <div class="stat-pill">
+        <i class="bi bi-people text-primary"></i>
+        <div>
+            <div class="val">@totalUsers</div>
+            <div class="lbl">Tổng thành viên</div>
+        </div>
+    </div>
+    <div class="stat-pill">
+        <i class="bi bi-shield-lock text-danger"></i>
+        <div>
+            <div class="val">@admins</div>
+            <div class="lbl">Quản trị viên</div>
+        </div>
+    </div>
+    <div class="stat-pill">
+        <i class="bi bi-pencil-square text-success"></i>
+        <div>
+            <div class="val">@editors</div>
+            <div class="lbl">Biên tập viên</div>
+        </div>
+    </div>
+</div>
+
+<div class="user-card">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h5 class="fw-bold text-dark mb-0">Danh sách thành viên hệ thống</h5>
+        <a asp-action="Create" class="btn btn-primary btn-sm">
+            <i class="bi bi-person-plus"></i> Thêm thành viên mới
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th class="border-0" style="width: 80px;">ID</th>
+                    <th class="border-0">Tên Đăng Nhập</th>
+                    <th class="border-0">Họ và Tên</th>
+                    <th class="border-0">Quyền Hạn</th>
+                    <th class="border-0 text-end" style="width: 180px;">Thao Tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td><span class="text-muted fw-semibold">#@user.Id</span></td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="bg-light rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                                    <i class="bi bi-person text-secondary"></i>
+                                </div>
+                                <span class="fw-bold text-dark">@user.Username</span>
+                            </div>
+                        </td>
+                        <td>@user.FullName</td>
+                        <td>
+                            @if (user.Role == "Admin")
+                            {
+                                <span class="badge bg-danger bg-opacity-10 text-danger px-2.5 py-1.5" style="font-size: 11px;">
+                                    <i class="bi bi-shield-check"></i> Administrator
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-info bg-opacity-10 text-info px-2.5 py-1.5" style="font-size: 11px;">
+                                    <i class="bi bi-pencil"></i> Editor
+                                </span>
+                            }
+                        </td>
+                        <td class="text-end">
+                            <a asp-action="Edit" asp-route-id="@user.Id" class="btn btn-sm btn-outline-warning me-1">
+                                <i class="bi bi-pencil"></i> Sửa
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@user.Id" 
+                               class="btn btn-sm btn-outline-danger"
+                               onclick="return confirm('Bạn có chắc chắn muốn xóa thành viên @user.Username không?')">
+                                <i class="bi bi-trash"></i> Xóa
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

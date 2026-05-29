@@ -1,0 +1,12 @@
+@{
+    var controllerName = ViewContext.RouteData.Values["controller"]?.ToString();
+    var adminControllers = new[] { "Category", "Post", "User", "Product", "ProductCategory", "Customer", "Order", "OrderDetail" };
+    if (adminControllers.Contains(controllerName))
+    {
+        Layout = "_LayoutAdmin";
+    }
+    else
+    {
+        Layout = "_Layout";
+    }
+}

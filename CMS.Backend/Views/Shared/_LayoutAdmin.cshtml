@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - MongNgan CMS Admin</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --sidebar-bg: #0f172a;
+            --sidebar-hover: #1e293b;
+            --sidebar-active: #3b82f6;
+            --sidebar-text: #94a3b8;
+            --sidebar-text-active: #ffffff;
+            --sidebar-width: 260px;
+            --topbar-height: 60px;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f1f5f9;
+            margin: 0;
+            color: #1e293b;
+        }
+
+        /* === SIDEBAR === */
+        .admin-sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--sidebar-bg);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            overflow-y: auto;
+            overflow-x: hidden;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 20px 22px;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+            text-decoration: none;
+        }
+
+        .sidebar-brand-icon {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .sidebar-brand-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-brand-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #f8fafc;
+            letter-spacing: 0.3px;
+            line-height: 1.2;
+        }
+
+        .sidebar-brand-sub {
+            font-size: 11px;
+            color: #64748b;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 16px 12px;
+        }
+
+        .nav-section-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            padding: 12px 10px 6px;
+            margin-top: 8px;
+        }
+
+        .nav-section-label:first-child {
+            margin-top: 0;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            font-size: 13.5px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            margin-bottom: 2px;
+        }
+
+        .sidebar-link:hover {
+            background: var(--sidebar-hover);
+            color: #e2e8f0;
+        }
+
+        .sidebar-link.active {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(59,130,246,0.35);
+        }
+
+        .sidebar-link i {
+            font-size: 16px;
+            flex-shrink: 0;
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-link .badge-count {
+            margin-left: auto;
+            font-size: 10px;
+            background: rgba(255,255,255,0.15);
+            color: #94a3b8;
+            padding: 2px 7px;
+            border-radius: 10px;
+        }
+
+        .sidebar-footer {
+            padding: 14px 12px;
+            border-top: 1px solid rgba(255,255,255,0.07);
+        }
+
+        .sidebar-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.04);
+        }
+
+        .sidebar-user-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10b981, #059669);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .sidebar-user-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .sidebar-user-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #e2e8f0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .sidebar-user-role {
+            font-size: 11px;
+            color: #64748b;
+        }
+
+        /* === MAIN CONTENT === */
+        .admin-main {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* === TOP BAR === */
+        .admin-topbar {
+            height: var(--topbar-height);
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            padding: 0 28px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 8px rgba(0,0,0,0.05);
+        }
+
+        .topbar-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e293b;
+            margin: 0;
+            flex: 1;
+        }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .topbar-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12.5px;
+            font-weight: 500;
+        }
+
+        .topbar-badge-admin {
+            background: #eff6ff;
+            color: #3b82f6;
+            border: 1px solid #bfdbfe;
+        }
+
+        .topbar-badge-editor {
+            background: #f0fdf4;
+            color: #16a34a;
+            border: 1px solid #bbf7d0;
+        }
+
+        .btn-logout {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 16px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 8px;
+            background: transparent;
+            color: #64748b;
+            font-size: 13px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-logout:hover {
+            background: #fef2f2;
+            color: #dc2626;
+            border-color: #fecaca;
+        }
+
+        /* === CONTENT AREA === */
+        .admin-content {
+            flex: 1;
+            padding: 28px 32px;
+        }
+
+        /* === CARD OVERRIDES === */
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+        }
+
+        .card-header {
+            border-radius: 12px 12px 0 0 !important;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            padding: 16px 20px;
+        }
+
+        .table {
+            font-size: 13.5px;
+        }
+
+        .table thead th {
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        /* === SCROLLBAR === */
+        .admin-sidebar::-webkit-scrollbar { width: 4px; }
+        .admin-sidebar::-webkit-scrollbar-track { background: transparent; }
+        .admin-sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+
+        /* === RESPONSIVE === */
+        @@media (max-width: 768px) {
+            .admin-sidebar { transform: translateX(-100%); }
+            .admin-main { margin-left: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <nav class="admin-sidebar">
+        <!-- Brand -->
+        <a class="sidebar-brand" href="/">
+            <div class="sidebar-brand-icon"><i class="bi bi-layers-half"></i></div>
+            <div class="sidebar-brand-text">
+                <span class="sidebar-brand-title">MongNgan CMS</span>
+                <span class="sidebar-brand-sub">Admin Panel</span>
+            </div>
+        </a>
+
+        <!-- Nav items -->
+        <div class="sidebar-nav">
+            <!-- CMS -->
+            <div class="nav-section-label">Nội dung CMS</div>
+            <a asp-controller="Home" asp-action="Dashboard" class="sidebar-link">
+                <i class="bi bi-speedometer2"></i> Bảng điều khiển
+            </a>
+            <a asp-controller="Category" asp-action="Index" class="sidebar-link">
+                <i class="bi bi-grid-3x3-gap"></i> Quản lý Danh mục
+            </a>
+            <a asp-controller="Post" asp-action="Index" class="sidebar-link">
+                <i class="bi bi-file-earmark-text"></i> Quản lý Bài viết
+            </a>
+            <a asp-controller="User" asp-action="Index" class="sidebar-link">
+                <i class="bi bi-people"></i> Quản lý Thành viên
+            </a>
+
+            <!-- Shop -->
+            <div class="nav-section-label">Cửa hàng</div>
+            <a asp-controller="ProductCategory" asp-action="Index" class="sidebar-link">
+                <i class="bi bi-tags"></i> Danh mục sản phẩm
+            </a>
+            <a asp-controller="Product" asp-action="Index" class="sidebar-link">
+                <i class="bi bi-box-seam"></i> Sản phẩm
+            </a>
+            <a asp-controller="Customer" asp-action="Index" class="sidebar-link">
+                <i class="bi bi-person-badge"></i> Khách hàng
+            </a>
+            <a asp-controller="Order" asp-action="Index" class="sidebar-link">
+                <i class="bi bi-cart3"></i> Đơn hàng
+            </a>
+            <a asp-controller="OrderDetail" asp-action="Index" class="sidebar-link">
+                <i class="bi bi-list-check"></i> Chi tiết đơn hàng
+            </a>
+        </div>
+
+        <!-- User info at bottom -->
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <div class="sidebar-user-avatar">
+                    <i class="bi bi-person"></i>
+                </div>
+                <div class="sidebar-user-info">
+                    @if (User.Identity != null && User.Identity.IsAuthenticated)
+                    {
+                        <div class="sidebar-user-name">@User.FindFirst("FullName")?.Value</div>
+                        <div class="sidebar-user-role">@User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value</div>
+                    }
+                    else
+                    {
+                        <div class="sidebar-user-name">Khách</div>
+                        <div class="sidebar-user-role">Chưa đăng nhập</div>
+                    }
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <div class="admin-main">
+        <!-- Top Bar -->
+        <div class="admin-topbar">
+            <h1 class="topbar-title">@ViewData["Title"]</h1>
+            <div class="topbar-actions">
+                @if (User.Identity != null && User.Identity.IsAuthenticated)
+                {
+                    var role = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+                    <span class="topbar-badge @(role == "Admin" ? "topbar-badge-admin" : "topbar-badge-editor")">
+                        <i class="bi bi-shield-check"></i> @role
+                    </span>
+                    <a asp-controller="Account" asp-action="Logout" class="btn-logout">
+                        <i class="bi bi-box-arrow-right"></i> Đăng xuất
+                    </a>
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="Login" class="btn-logout">
+                        <i class="bi bi-box-arrow-in-right"></i> Đăng nhập
+                    </a>
+                }
+            </div>
+        </div>
+
+        <!-- Page Content -->
+        <div class="admin-content">
+            @RenderBody()
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
