@@ -350,9 +350,13 @@
             <a asp-controller="Post" asp-action="Index" class="sidebar-link">
                 <i class="bi bi-file-earmark-text"></i> Quản lý Bài viết
             </a>
-            <a asp-controller="User" asp-action="Index" class="sidebar-link">
-                <i class="bi bi-people"></i> Quản lý Thành viên
-            </a>
+            @if (User.IsInRole("Admin"))
+            {
+                <a asp-controller="User" asp-action="Index" class="sidebar-link">
+                    <i class="bi bi-people"></i> Quản lý Thành viên
+                    <span class="badge-count">Admin</span>
+                </a>
+            }
 
             <!-- Shop -->
             <div class="nav-section-label">Cửa hàng</div>
