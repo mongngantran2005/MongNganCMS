@@ -1,0 +1,105 @@
+@model CMS.Data.Entities.Product
+
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<div class="container mt-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Chi tiết sản phẩm</li>
+        </ol>
+    </nav>
+
+    <div class="card shadow-sm border-0 mt-4">
+        <div class="row g-0">
+            <div class="col-md-5">
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    <img src="@Model.ImageUrl" class="img-fluid rounded-start w-100" alt="@Model.Name" style="object-fit: cover; max-height: 500px;" />
+                }
+                else
+                {
+                    <div class="bg-light d-flex align-items-center justify-content-center w-100 rounded-start" style="min-height: 400px;">
+                        <i class="bi bi-image text-muted" style="font-size: 5rem;"></i>
+                    </div>
+                }
+            </div>
+            <div class="col-md-7">
+                <div class="card-body p-5">
+                    <span class="badge bg-primary mb-3 fs-6">
+                        @(Model.CategoryProduct?.Name ?? "Chưa phân loại")
+                    </span>
+                    
+                    <h2 class="card-title fw-bold text-dark mb-3">@Model.Name</h2>
+                    
+                    <h3 class="text-danger fw-bold mb-4">
+                        @Model.Price.ToString("N0") đ
+                    </h3>
+
+                    <div class="mb-4">
+                        <h5 class="fw-bold">Mô tả sản phẩm:</h5>
+                        <div class="text-muted" style="line-height: 1.8;">
+                            @if (!string.IsNullOrEmpty(Model.Description))
+                            {
+                                @Html.Raw(Model.Description.Replace("\n", "<br/>"))
+                            }
+                            else
+                            {
+                                <em>Đang cập nhật mô tả cho sản phẩm này.</em>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="mb-4 d-flex align-items-center">
+                        <span class="me-3 fw-bold">Tình trạng:</span>
+                        @if (Model.StockQuantity > 0)
+                        {
+                            <span class="badge bg-success">Còn hàng (@Model.StockQuantity)</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">Hết hàng</span>
+                        }
+                    </div>
+
+                    <hr class="my-4" />
+
+                    <form asp-controller="Cart" asp-action="Add" method="post" class="d-flex gap-3 w-100">
+                        <input type="hidden" name="productId" value="@Model.Id" />
+                        <div class="input-group" style="width: 130px;">
+                            <button class="btn btn-outline-secondary" type="button" id="btn-minus">-</button>
+                            <input type="number" class="form-control text-center" name="quantity" value="1" min="1" max="@Model.StockQuantity" id="quantity-input" />
+                            <button class="btn btn-outline-secondary" type="button" id="btn-plus">+</button>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg flex-grow-1 rounded-pill shadow-sm" @(Model.StockQuantity <= 0 ? "disabled" : "")>
+                            <i class="bi bi-cart-plus me-2"></i> THÊM VÀO GIỎ HÀNG
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('btn-minus').addEventListener('click', function() {
+            var input = document.getElementById('quantity-input');
+            var val = parseInt(input.value);
+            if (val > 1) {
+                input.value = val - 1;
+            }
+        });
+
+        document.getElementById('btn-plus').addEventListener('click', function() {
+            var input = document.getElementById('quantity-input');
+            var val = parseInt(input.value);
+            var max = parseInt(input.getAttribute('max'));
+            if (val < max) {
+                input.value = val + 1;
+            }
+        });
+    </script>
+}
