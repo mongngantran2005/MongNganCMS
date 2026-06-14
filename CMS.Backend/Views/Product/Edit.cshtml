@@ -7,14 +7,17 @@
 <div class="container mt-4" style="max-width: 600px;">
     <h2 class="text-warning mb-4">✏️ Chỉnh Sửa Sản Phẩm</h2>
 
-    <form asp-action="Edit" method="post">
+    <form asp-action="Edit" method="post" enctype="multipart/form-data">
         <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="ImageUrl" /> <!-- Lưu lại url ảnh cũ -->
 
         <div class="mb-3">
             <label asp-for="Name" class="form-label fw-bold">Tên sản phẩm</label>
             <input asp-for="Name" class="form-control" required />
             <span asp-validation-for="Name" class="text-danger"></span>
         </div>
+
+        <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
         <div class="mb-3">
             <label asp-for="CategoryProductId" class="form-label fw-bold">Danh mục</label>
@@ -37,9 +40,19 @@
         </div>
 
         <div class="mb-3">
-            <label asp-for="ImageUrl" class="form-label fw-bold">Đường dẫn ảnh (URL)</label>
-            <input asp-for="ImageUrl" class="form-control" />
-            <span asp-validation-for="ImageUrl" class="text-danger"></span>
+            <label class="form-label fw-bold">Ảnh hiện tại</label>
+            <div>
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    <img src="@Model.ImageUrl" alt="Current Image" style="max-height: 100px;" class="mb-2" />
+                }
+                else
+                {
+                    <span class="text-muted">Chưa có ảnh</span>
+                }
+            </div>
+            <label class="form-label fw-bold mt-2">Chọn ảnh mới (để trống nếu không đổi)</label>
+            <input type="file" name="ImageFile" class="form-control" accept="image/*" />
         </div>
 
         <div class="mb-3">

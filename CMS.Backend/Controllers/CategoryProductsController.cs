@@ -22,7 +22,9 @@ namespace CMS.Backend.Controllers
                 .Select(c => new {
                     c.Id,
                     c.Name,
-                    c.Description
+                    c.Description,
+                    c.ParentId,
+                    c.ImageUrl
                 })
                 .ToList();
 

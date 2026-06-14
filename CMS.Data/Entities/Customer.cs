@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,6 +21,11 @@ namespace CMS.Data.Entities
 
         public string? Phone { get; set; }
         public string? Address { get; set; }
+
+        public string? Username { get; set; }
+        public string? Gender { get; set; } // Nam, Nữ, Khác
+        public DateTime? DateOfBirth { get; set; }
+        public string? AvatarUrl { get; set; }
 
         [Required]
         public string Password { get; set; }

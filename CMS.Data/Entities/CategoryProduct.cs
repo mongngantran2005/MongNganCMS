@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CMS.Data.Entities
 {
@@ -17,6 +18,13 @@ namespace CMS.Data.Entities
         public string Name { get; set; }
 
         public string? Description { get; set; }
+
+        public string? ImageUrl { get; set; }
+
+        public int? ParentId { get; set; }
+        [ForeignKey("ParentId")]
+        public virtual CategoryProduct? ParentCategory { get; set; }
+        public virtual ICollection<CategoryProduct>? ChildCategories { get; set; }
 
         public virtual ICollection<Product>? Products { get; set; }
     }

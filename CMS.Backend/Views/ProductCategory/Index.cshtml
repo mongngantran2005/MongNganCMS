@@ -30,7 +30,9 @@
         <thead class="table-dark">
             <tr>
                 <th>ID</th>
+                <th>Hình ảnh</th>
                 <th>Tên danh mục</th>
+                <th>Danh mục cha</th>
                 <th>Mô tả</th>
                 <th>Thao tác</th>
             </tr>
@@ -40,7 +42,29 @@
             {
                 <tr>
                     <td>@item.Id</td>
-                    <td><strong>@item.Name</strong></td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.ImageUrl))
+                        {
+                            <img src="@item.ImageUrl" alt="Image" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;" />
+                        }
+                        else
+                        {
+                            <span class="text-muted">Không có ảnh</span>
+                        }
+                    </td>
+                    <td>
+                        @if (item.ParentId != null)
+                        {
+                            <span class="ms-3 text-muted">|_</span> <strong>@item.Name</strong>
+                        }
+                        else
+                        {
+                            <strong>@item.Name</strong>
+                        }
+                    </td>
+                    <td>
+                        @(item.ParentCategory != null ? item.ParentCategory.Name : "-")
+                    </td>
                     <td>@(item.Description ?? "Không có mô tả")</td>
                     <td>
                         <div class="d-flex gap-2">

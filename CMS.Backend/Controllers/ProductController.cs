@@ -1,9 +1,15 @@
+using System;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using CMS.Data;
 using CMS.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 
 namespace CMS.Backend.Controllers
 {
@@ -11,10 +17,12 @@ namespace CMS.Backend.Controllers
     public class ProductController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IWebHostEnvironment _env;
 
-        public ProductController(ApplicationDbContext context)
+        public ProductController(ApplicationDbContext context, IWebHostEnvironment env)
         {
             _context = context;
+            _env = env;
         }
 
         // GET: /Product
@@ -28,25 +36,70 @@ namespace CMS.Backend.Controllers
             return View(products);
         }
 
+        // Helper method for hierarchical category list
+        private List<SelectListItem> GetCategorySelectList(int? selectedId = null)
+        {
+            var categories = _context.CategoriesProducts.ToList();
+            var selectList = new List<SelectListItem>();
+
+            var parentCategories = categories.Where(c => c.ParentId == null).ToList();
+            foreach (var parent in parentCategories)
+            {
+                selectList.Add(new SelectListItem 
+                { 
+                    Value = parent.Id.ToString(), 
+                    Text = parent.Name,
+                    Selected = selectedId == parent.Id
+                });
+
+                var childCategories = categories.Where(c => c.ParentId == parent.Id).ToList();
+                foreach (var child in childCategories)
+                {
+                    selectList.Add(new SelectListItem 
+                    { 
+                        Value = child.Id.ToString(), 
+                        Text = $"-- {child.Name}",
+                        Selected = selectedId == child.Id
+                    });
+                }
+            }
+            return selectList;
+        }
+
         // GET: /Product/Create
         public IActionResult Create()
         {
-            ViewBag.CategoryProductId = new SelectList(_context.CategoriesProducts, "Id", "Name");
+            ViewBag.CategoryProductId = GetCategorySelectList();
             return View();
         }
 
         // POST: /Product/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Product model)
+        public async Task<IActionResult> Create(Product model, IFormFile? ImageFile)
         {
+            ModelState.Remove("CategoryProduct");
+
             if (ModelState.IsValid)
             {
+                if (ImageFile != null && ImageFile.Length > 0)
+                {
+                    var uploadsFolder = Path.Combine(_env.WebRootPath, "images", "products");
+                    if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
+                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(ImageFile.FileName);
+                    var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await ImageFile.CopyToAsync(fileStream);
+                    }
+                    model.ImageUrl = "/images/products/" + uniqueFileName;
+                }
+
                 _context.Products.Add(model);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewBag.CategoryProductId = new SelectList(_context.CategoriesProducts, "Id", "Name", model.CategoryProductId);
+            ViewBag.CategoryProductId = GetCategorySelectList(model.CategoryProductId);
             return View(model);
         }
 
@@ -56,24 +109,48 @@ namespace CMS.Backend.Controllers
             var product = _context.Products.Find(id);
             if (product == null) return NotFound();
             
-            ViewBag.CategoryProductId = new SelectList(_context.CategoriesProducts, "Id", "Name", product.CategoryProductId);
+            ViewBag.CategoryProductId = GetCategorySelectList(product.CategoryProductId);
             return View(product);
         }
 
         // POST: /Product/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, Product model)
+        public async Task<IActionResult> Edit(int id, Product model, IFormFile? ImageFile)
         {
             if (id != model.Id) return NotFound();
 
+            ModelState.Remove("CategoryProduct");
+
             if (ModelState.IsValid)
             {
+                if (ImageFile != null && ImageFile.Length > 0)
+                {
+                    var uploadsFolder = Path.Combine(_env.WebRootPath, "images", "products");
+                    if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
+                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(ImageFile.FileName);
+                    var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await ImageFile.CopyToAsync(fileStream);
+                    }
+                    model.ImageUrl = "/images/products/" + uniqueFileName;
+                }
+                else
+                {
+                    // Giữ nguyên ảnh cũ nếu không chọn ảnh mới
+                    var existingProduct = await _context.Products.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
+                    if (existingProduct != null)
+                    {
+                        model.ImageUrl = existingProduct.ImageUrl;
+                    }
+                }
+
                 _context.Products.Update(model);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewBag.CategoryProductId = new SelectList(_context.CategoriesProducts, "Id", "Name", model.CategoryProductId);
+            ViewBag.CategoryProductId = GetCategorySelectList(model.CategoryProductId);
             return View(model);
         }
 

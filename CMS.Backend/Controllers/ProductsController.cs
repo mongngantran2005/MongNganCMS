@@ -15,10 +15,34 @@ namespace CMS.Backend.Controllers
             _context = context;
         }
 
+        /// <summary>
+        /// Lấy danh sách sản phẩm (có hỗ trợ tìm kiếm và lọc theo danh mục)
+        /// </summary>
+        /// <param name="search">Từ khóa tìm kiếm theo tên sản phẩm</param>
+        /// <param name="categoryId">ID của danh mục cần lọc</param>
+        /// <returns>Danh sách sản phẩm</returns>
         [HttpGet]
-        public IActionResult GetAll()
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IActionResult GetAll([FromQuery] string? search = null, [FromQuery] int? categoryId = null)
         {
-            var products = _context.Products
+            var query = _context.Products.AsQueryable();
+
+            if (categoryId.HasValue && categoryId.Value > 0)
+            {
+                var targetCategoryIds = _context.CategoriesProducts
+                    .Where(c => c.Id == categoryId.Value || c.ParentId == categoryId.Value)
+                    .Select(c => c.Id)
+                    .ToList();
+
+                query = query.Where(p => targetCategoryIds.Contains(p.CategoryProductId));
+            }
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                query = query.Where(p => p.Name.Contains(search));
+            }
+
+            var products = query
                 .OrderByDescending(p => p.Id)
                 .Select(p => new {
                     p.Id,
@@ -36,14 +60,20 @@ namespace CMS.Backend.Controllers
         [HttpGet("category/{categoryId}")]
         public IActionResult GetByCategory(int categoryId)
         {
+            var targetCategoryIds = _context.CategoriesProducts
+                .Where(c => c.Id == categoryId || c.ParentId == categoryId)
+                .Select(c => c.Id)
+                .ToList();
+
             var products = _context.Products
-                .Where(p => p.CategoryProductId == categoryId)
+                .Where(p => targetCategoryIds.Contains(p.CategoryProductId))
                 .Select(p => new {
                     p.Id,
                     p.Name,
                     p.Price,
                     p.ImageUrl,
-                    p.StockQuantity
+                    p.StockQuantity,
+                    CategoryName = p.CategoryProduct != null ? p.CategoryProduct.Name : "Chưa phân loại"
                 })
                 .ToList();
 

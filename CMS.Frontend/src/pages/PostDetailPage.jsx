@@ -12,23 +12,44 @@ function PostDetailPage() {
       .catch(err => console.error(err));
   }, [id]);
 
-  if (!post) return <div className="container section-padding text-center">Đang tải...</div>;
+  const getImg = (url) => {
+    if (!url) return null;
+    return url.startsWith('http') ? url : `http://localhost:5188${url}`;
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    return new Date(dateString).toLocaleDateString('vi-VN', {
+      year: 'numeric', month: 'long', day: 'numeric'
+    });
+  };
+
+  if (!post) return <p className="state-msg">Đang tải bài viết...</p>;
 
   return (
-    <div className="container section-padding" style={{ maxWidth: '800px' }}>
-      <Link to="/posts" style={{ color: 'var(--primary)', marginBottom: '20px', display: 'inline-block' }}>← Quay lại danh sách</Link>
-      <div className="glass-card animate-fade-in" style={{ padding: '40px' }}>
-        <span className="category-badge" style={{ marginBottom: '15px' }}>{post.category?.name || 'Tin tức'}</span>
-        <h1 style={{ fontSize: '2.5rem', marginBottom: '10px' }}>{post.title}</h1>
-        <p className="date" style={{ marginBottom: '30px', color: 'var(--text-muted)' }}>{new Date(post.createdAt).toLocaleDateString()}</p>
-        
-        {post.imageUrl && (
-          <div style={{ marginBottom: '30px' }}>
-            <img src={`https://localhost:7296${post.imageUrl}`} alt={post.title} style={{ width: '100%', borderRadius: '12px', objectFit: 'cover', maxHeight: '400px' }} />
-          </div>
-        )}
+    <div className="container section-padding">
+      <div className="post-detail-wrapper">
+        <Link to="/posts" className="back-link">← Quay lại danh sách tin tức</Link>
 
-        <div style={{ lineHeight: '1.8', fontSize: '1.1rem', color: '#e2e8f0' }} dangerouslySetInnerHTML={{ __html: post.content }}>
+        <div className="post-detail-card">
+          <div className="post-card-category">{post.categoryName}</div>
+          <h1 className="post-detail-title">{post.title}</h1>
+          <div className="post-detail-meta">
+            🕐 Đăng ngày: {formatDate(post.createdAt)}
+          </div>
+
+          {getImg(post.imageUrl) && (
+            <img
+              src={getImg(post.imageUrl)}
+              alt={post.title}
+              className="post-detail-img"
+            />
+          )}
+
+          <div
+            className="post-detail-content"
+            dangerouslySetInnerHTML={{ __html: post.content || '<p>Nội dung đang được cập nhật...</p>' }}
+          />
         </div>
       </div>
     </div>

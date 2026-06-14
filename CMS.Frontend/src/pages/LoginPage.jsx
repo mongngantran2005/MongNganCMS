@@ -5,51 +5,60 @@ import api from '../api';
 function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = (e) => {
     e.preventDefault();
+    setLoading(true);
     api.post('/customers/login', { email, password })
       .then(res => {
         localStorage.setItem('customerInfo', JSON.stringify(res.data));
+        window.dispatchEvent(new Event('storage'));
         navigate('/');
       })
       .catch(err => {
-        alert(err.response?.data?.message || 'Đăng nhập thất bại');
+        alert(err.response?.data?.message || 'Email hoặc mật khẩu không đúng');
+        setLoading(false);
       });
   };
 
   return (
-    <div className="container section-padding" style={{ maxWidth: '500px' }}>
-      <div className="glass-card animate-fade-in" style={{ padding: '40px' }}>
-        <h2 style={{ textAlign: 'center', marginBottom: '30px', fontSize: '2rem' }}>Đăng Nhập</h2>
+    <div className="auth-wrapper">
+      <div className="auth-card">
+        <h2 className="auth-title">Đăng Nhập</h2>
+        <p className="auth-subtitle">Chào mừng bạn quay lại!</p>
+
         <form onSubmit={handleLogin}>
-          <div style={{ marginBottom: '20px' }}>
-            <label style={{ display: 'block', marginBottom: '8px' }}>Email</label>
-            <input 
-              type="email" 
+          <div className="form-group">
+            <label className="form-label">Email</label>
+            <input
+              type="email"
               required
-              className="form-control"
-              style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'rgba(0,0,0,0.2)', color: '#fff' }}
+              className="form-input"
+              placeholder="nhập email của bạn"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          <div style={{ marginBottom: '30px' }}>
-            <label style={{ display: 'block', marginBottom: '8px' }}>Mật khẩu</label>
-            <input 
-              type="password" 
+          <div className="form-group">
+            <label className="form-label">Mật khẩu</label>
+            <input
+              type="password"
               required
-              className="form-control"
-              style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'rgba(0,0,0,0.2)', color: '#fff' }}
+              className="form-input"
+              placeholder="nhập mật khẩu"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <button type="submit" className="btn-primary" style={{ width: '100%', padding: '12px', fontSize: '1.1rem' }}>Đăng nhập</button>
+          <button type="submit" className="auth-submit-btn" disabled={loading}>
+            {loading ? 'Đang đăng nhập...' : 'Đăng Nhập'}
+          </button>
         </form>
-        <p style={{ textAlign: 'center', marginTop: '20px', color: 'var(--text-muted)' }}>
-          Chưa có tài khoản? <Link to="/register" style={{ color: 'var(--primary)' }}>Đăng ký ngay</Link>
+
+        <p className="auth-footer-text">
+          Chưa có tài khoản? <Link to="/register">Đăng ký ngay</Link>
         </p>
       </div>
     </div>

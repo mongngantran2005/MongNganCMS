@@ -100,66 +100,66 @@ namespace CMS.Backend.Controllers
         // PHẦN 4: API THÊM MỚI BÀI VIẾT (POST METHOD)
         // URL: POST https://localhost:xxxx/api/posts
         // =====================================================================
-        [HttpPost]
-        public IActionResult Create([FromBody] CMS.Data.Entities.Post model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+    //     [HttpPost]
+    //     public IActionResult Create([FromBody] CMS.Data.Entities.Post model)
+    //     {
+    //         if (!ModelState.IsValid)
+    //         {
+    //             return BadRequest(ModelState);
+    //         }
 
-            model.CreatedDate = System.DateTime.Now;
-            _context.Posts.Add(model);
-            _context.SaveChanges();
+    //         model.CreatedDate = System.DateTime.Now;
+    //         _context.Posts.Add(model);
+    //         _context.SaveChanges();
 
-            return CreatedAtAction(nameof(GetDetail), new { id = model.Id }, model);
-        }
+    //         return CreatedAtAction(nameof(GetDetail), new { id = model.Id }, model);
+    //     }
 
-        // =====================================================================
-        // PHẦN 5: API CẬP NHẬT BÀI VIẾT (PUT METHOD)
-        // URL: PUT https://localhost:xxxx/api/posts/{id}
-        // =====================================================================
-        [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] CMS.Data.Entities.Post model)
-        {
-            if (id != model.Id)
-            {
-                return BadRequest(new { message = "ID không khớp" });
-            }
+    //     // =====================================================================
+    //     // PHẦN 5: API CẬP NHẬT BÀI VIẾT (PUT METHOD)
+    //     // URL: PUT https://localhost:xxxx/api/posts/{id}
+    //     // =====================================================================
+    //     [HttpPut("{id}")]
+    //     public IActionResult Update(int id, [FromBody] CMS.Data.Entities.Post model)
+    //     {
+    //         if (id != model.Id)
+    //         {
+    //             return BadRequest(new { message = "ID không khớp" });
+    //         }
 
-            var post = _context.Posts.Find(id);
-            if (post == null)
-            {
-                return NotFound(new { message = "Không tìm thấy bài viết" });
-            }
+    //         var post = _context.Posts.Find(id);
+    //         if (post == null)
+    //         {
+    //             return NotFound(new { message = "Không tìm thấy bài viết" });
+    //         }
 
-            post.Title = model.Title;
-            post.Content = model.Content;
-            post.ImageUrl = model.ImageUrl;
-            post.CategoryId = model.CategoryId;
+    //         post.Title = model.Title;
+    //         post.Content = model.Content;
+    //         post.ImageUrl = model.ImageUrl;
+    //         post.CategoryId = model.CategoryId;
 
-            _context.SaveChanges();
+    //         _context.SaveChanges();
 
-            return Ok(new { message = "Cập nhật thành công" });
-        }
+    //         return Ok(new { message = "Cập nhật thành công" });
+    //     }
 
-        // =====================================================================
-        // PHẦN 6: API XÓA BÀI VIẾT (DELETE METHOD)
-        // URL: DELETE https://localhost:xxxx/api/posts/{id}
-        // =====================================================================
-        [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
-        {
-            var post = _context.Posts.Find(id);
-            if (post == null)
-            {
-                return NotFound(new { message = "Không tìm thấy bài viết" });
-            }
+    //     // =====================================================================
+    //     // PHẦN 6: API XÓA BÀI VIẾT (DELETE METHOD)
+    //     // URL: DELETE https://localhost:xxxx/api/posts/{id}
+    //     // =====================================================================
+    //     [HttpDelete("{id}")]
+    //     public IActionResult Delete(int id)
+    //     {
+    //         var post = _context.Posts.Find(id);
+    //         if (post == null)
+    //         {
+    //             return NotFound(new { message = "Không tìm thấy bài viết" });
+    //         }
 
-            _context.Posts.Remove(post);
-            _context.SaveChanges();
+    //         _context.Posts.Remove(post);
+    //         _context.SaveChanges();
 
-            return Ok(new { message = "Xóa thành công" });
-        }
+    //         return Ok(new { message = "Xóa thành công" });
+    //     }
     }
 }

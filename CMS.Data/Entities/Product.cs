@@ -14,20 +14,23 @@ namespace CMS.Data.Entities
         [Key]
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Tên sản phẩm không được để trống")]
+        [Required(ErrorMessage = "Tên sản phẩm không được để trống.")]
         public string Name { get; set; }
 
         public string? Description { get; set; }
 
-        [Range(0, double.MaxValue)]
+        [Required(ErrorMessage = "Vui lòng nhập giá sản phẩm.")]
+        [Range(0, double.MaxValue, ErrorMessage = "Giá sản phẩm phải lớn hơn hoặc bằng 0.")]
         [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; }
 
+        [Required(ErrorMessage = "Vui lòng nhập số lượng tồn kho.")]
+        [Range(0, int.MaxValue, ErrorMessage = "Tồn kho phải lớn hơn hoặc bằng 0.")]
         public int StockQuantity { get; set; } // Số lượng tồn kho
 
         public string? ImageUrl { get; set; }
 
-        // Khóa ngoại nối tới CategoryProduct
+        [Required(ErrorMessage = "Vui lòng chọn danh mục sản phẩm.")]
         public int CategoryProductId { get; set; }
 
         [ForeignKey("CategoryProductId")]

@@ -1,0 +1,69 @@
+@model CMS.Data.Entities.Banner
+
+@{
+    ViewData["Title"] = "Sửa Banner";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Sửa Banner</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a asp-action="Index" class="btn btn-sm btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Quay lại
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <form asp-action="Edit" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            
+            <div class="mb-3">
+                <label asp-for="Title" class="form-label">Tiêu đề</label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Hình ảnh hiện tại</label>
+                <div>
+                    <img src="@Model.ImageUrl" alt="@Model.Title" style="max-width: 300px; border-radius: 4px; border: 1px solid #ddd;" />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Chọn ảnh mới (để trống nếu không đổi)</label>
+                <input type="file" name="imageFile" class="form-control" accept="image/*" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="TargetUrl" class="form-label">Link đích (TargetUrl - tuỳ chọn)</label>
+                <input asp-for="TargetUrl" class="form-control" placeholder="https://..." />
+                <span asp-validation-for="TargetUrl" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="DisplayOrder" class="form-label">Thứ tự hiển thị</label>
+                <input asp-for="DisplayOrder" class="form-control" type="number" />
+                <span asp-validation-for="DisplayOrder" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3 form-check">
+                <input class="form-check-input" asp-for="IsActive" />
+                <label class="form-check-label" asp-for="IsActive">
+                    Hiển thị (Kích hoạt)
+                </label>
+            </div>
+
+            <div class="mb-3">
+                <input type="submit" value="Lưu thay đổi" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

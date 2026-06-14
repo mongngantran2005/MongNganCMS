@@ -1,0 +1,40 @@
+@model CMS.Data.Entities.Banner
+
+@{
+    ViewData["Title"] = "Xóa Banner";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2 text-danger">Xóa Banner</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a asp-action="Index" class="btn btn-sm btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Quay lại
+        </a>
+    </div>
+</div>
+
+<div class="alert alert-warning">
+    <h4>Bạn có chắc chắn muốn xóa banner này không?</h4>
+    <p>Hành động này không thể hoàn tác.</p>
+</div>
+
+<div>
+    <dl class="row">
+        <dt class="col-sm-3">Tiêu đề</dt>
+        <dd class="col-sm-9">@Model.Title</dd>
+
+        <dt class="col-sm-3">Hình ảnh</dt>
+        <dd class="col-sm-9">
+            <img src="@Model.ImageUrl" alt="@Model.Title" style="max-height: 150px; border: 1px solid #ddd; border-radius: 4px;" />
+        </dd>
+
+        <dt class="col-sm-3">Trạng thái</dt>
+        <dd class="col-sm-9">@(Model.IsActive ? "Hiển thị" : "Đã ẩn")</dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Xác nhận xóa" class="btn btn-danger" />
+    </form>
+</div>

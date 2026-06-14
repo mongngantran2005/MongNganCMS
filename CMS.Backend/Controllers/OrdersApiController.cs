@@ -87,5 +87,32 @@ namespace CMS.Backend.Controllers
                 return StatusCode(500, new { message = "Lỗi khi đặt hàng", error = ex.Message });
             }
         }
+
+        [HttpGet("customer/{customerId}")]
+        public IActionResult GetByCustomer(int customerId)
+        {
+            var orders = _context.Orders
+                .Where(o => o.CustomerId == customerId)
+                .OrderByDescending(o => o.OrderDate)
+                .Select(o => new {
+                    o.Id,
+                    o.OrderDate,
+                    o.Status,
+                    o.Notes,
+                    TotalAmount = _context.OrderDetails.Where(od => od.OrderId == o.Id).Sum(od => od.Quantity * od.UnitPrice),
+                    Items = _context.OrderDetails
+                        .Where(od => od.OrderId == o.Id)
+                        .Select(od => new {
+                            od.ProductId,
+                            od.Quantity,
+                            od.UnitPrice,
+                            ProductName = _context.Products.FirstOrDefault(p => p.Id == od.ProductId).Name,
+                            ImageUrl = _context.Products.FirstOrDefault(p => p.Id == od.ProductId).ImageUrl
+                        }).ToList()
+                })
+                .ToList();
+
+            return Ok(orders);
+        }
     }
 }
