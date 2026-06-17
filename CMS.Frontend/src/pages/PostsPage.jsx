@@ -1,56 +1,51 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import api from '../api';
+import React, { useState, useEffect } from 'react';
+import PostList from '../components/Post/PostList';
+import Pagination from '../components/Products/Pagination';
+import { getPosts } from '../services/postService';
 
 function PostsPage() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const pageSize = 9;
 
   useEffect(() => {
-    api.get('/posts')
-      .then(res => { setPosts(res.data); setLoading(false); })
-      .catch(err => { console.error(err); setLoading(false); });
+    getPosts()
+      .then(data => {
+        setPosts(data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setLoading(false);
+      });
   }, []);
 
-  const getImg = (url) => {
-    if (!url) return null;
-    return url.startsWith('http') ? url : `http://localhost:5188${url}`;
-  };
-
-  const formatDate = (dateString) => {
-    if (!dateString) return '';
-    return new Date(dateString).toLocaleDateString('vi-VN');
-  };
+  const totalPages = Math.ceil(posts.length / pageSize);
+  const pagedPosts = posts.slice((page - 1) * pageSize, page * pageSize);
 
   return (
-    <div className="container section-padding">
-      <h1 className="page-title">Tin Tức & Góc Làm Đẹp</h1>
-
-      {loading ? (
-        <p className="state-msg">Đang tải tin tức...</p>
-      ) : posts.length === 0 ? (
-        <p className="state-msg">Chưa có bài viết nào.</p>
-      ) : (
-        <div className="posts-grid">
-          {posts.map(post => (
-            <div key={post.id} className="post-card">
-              {getImg(post.imageUrl) ? (
-                <img src={getImg(post.imageUrl)} alt={post.title} />
-              ) : (
-                <div className="post-card-img-placeholder">Không có ảnh</div>
-              )}
-              <div className="post-card-body">
-                <div className="post-card-category">{post.categoryName}</div>
-                <h3 className="post-card-title">{post.title}</h3>
-                <div className="post-card-footer">
-                  <span className="post-card-date">🕐 {formatDate(post.createdAt)}</span>
-                  <Link to={`/posts/${post.id}`} className="read-more-link">Đọc tiếp →</Link>
-                </div>
-              </div>
-            </div>
-          ))}
+    <div style={{ backgroundColor: '#f5f5f5', minHeight: '80vh', padding: '40px 0' }}>
+      <div className="container">
+        
+        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+          <h1 style={{ fontSize: '28px', fontWeight: '800', color: '#1a1a1a', marginBottom: '12px' }}>
+            Góc Làm Đẹp
+          </h1>
+          <p style={{ fontSize: '15px', color: '#666', maxWidth: '600px', margin: '0 auto' }}>
+            Cập nhật những xu hướng làm đẹp mới nhất, bí quyết chăm sóc da và review sản phẩm chân thực từ chuyên gia.
+          </p>
         </div>
-      )}
+
+        <PostList posts={pagedPosts} loading={loading} />
+        
+        {totalPages > 1 && (
+          <div style={{ marginTop: '40px' }}>
+            <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
+          </div>
+        )}
+        
+      </div>
     </div>
   );
 }

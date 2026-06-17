@@ -1,65 +1,30 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import api from '../api';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import LoginForm from '../components/Auth/LoginForm';
 
 function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-
-  const handleLogin = (e) => {
-    e.preventDefault();
-    setLoading(true);
-    api.post('/customers/login', { email, password })
-      .then(res => {
-        localStorage.setItem('customerInfo', JSON.stringify(res.data));
-        window.dispatchEvent(new Event('storage'));
-        navigate('/');
-      })
-      .catch(err => {
-        alert(err.response?.data?.message || 'Email hoặc mật khẩu không đúng');
-        setLoading(false);
-      });
-  };
-
   return (
-    <div className="auth-wrapper">
-      <div className="auth-card">
-        <h2 className="auth-title">Đăng Nhập</h2>
-        <p className="auth-subtitle">Chào mừng bạn quay lại!</p>
+    <div style={{ backgroundColor: '#f9f9f9', minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' }}>
+      <div style={{ backgroundColor: '#fff', borderRadius: '12px', padding: '40px', width: '100%', maxWidth: '420px', boxShadow: '0 4px 20px rgba(0,0,0,0.06)' }}>
+        
+        <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+          <h1 style={{ fontSize: '24px', fontWeight: '800', color: '#1a1a1a', marginBottom: '8px' }}>
+            Đăng Nhập
+          </h1>
+          <p style={{ fontSize: '14px', color: '#666' }}>
+            Đăng nhập để trải nghiệm mua sắm tốt hơn.
+          </p>
+        </div>
 
-        <form onSubmit={handleLogin}>
-          <div className="form-group">
-            <label className="form-label">Email</label>
-            <input
-              type="email"
-              required
-              className="form-input"
-              placeholder="nhập email của bạn"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-          <div className="form-group">
-            <label className="form-label">Mật khẩu</label>
-            <input
-              type="password"
-              required
-              className="form-input"
-              placeholder="nhập mật khẩu"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-          <button type="submit" className="auth-submit-btn" disabled={loading}>
-            {loading ? 'Đang đăng nhập...' : 'Đăng Nhập'}
-          </button>
-        </form>
+        <LoginForm />
 
-        <p className="auth-footer-text">
-          Chưa có tài khoản? <Link to="/register">Đăng ký ngay</Link>
-        </p>
+        <div style={{ marginTop: '24px', textAlign: 'center', fontSize: '14px', color: '#666', borderTop: '1px solid #eee', paddingTop: '20px' }}>
+          Chưa có tài khoản?{' '}
+          <Link to="/register" style={{ color: 'var(--primary, #326e51)', fontWeight: '700', textDecoration: 'none' }}>
+            Đăng ký ngay
+          </Link>
+        </div>
+
       </div>
     </div>
   );

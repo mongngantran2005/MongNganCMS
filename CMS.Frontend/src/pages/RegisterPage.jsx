@@ -1,72 +1,30 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import api from '../api';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import RegisterForm from '../components/Auth/RegisterForm';
 
 function RegisterPage() {
-  const [formData, setFormData] = useState({
-    fullName: '', email: '', password: '', phone: '', address: ''
-  });
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleRegister = (e) => {
-    e.preventDefault();
-    setLoading(true);
-    api.post('/customers/register', formData)
-      .then(() => {
-        alert('Đăng ký thành công! Vui lòng đăng nhập.');
-        navigate('/login');
-      })
-      .catch(err => {
-        alert(err.response?.data?.message || 'Đăng ký thất bại');
-        setLoading(false);
-      });
-  };
-
   return (
-    <div className="auth-wrapper">
-      <div className="auth-card">
-        <h2 className="auth-title">Tạo Tài Khoản</h2>
-        <p className="auth-subtitle">Đăng ký để nhận ưu đãi độc quyền!</p>
+    <div style={{ backgroundColor: '#f9f9f9', minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' }}>
+      <div style={{ backgroundColor: '#fff', borderRadius: '12px', padding: '40px', width: '100%', maxWidth: '480px', boxShadow: '0 4px 20px rgba(0,0,0,0.06)' }}>
+        
+        <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+          <h1 style={{ fontSize: '24px', fontWeight: '800', color: '#1a1a1a', marginBottom: '8px' }}>
+            Tạo Tài Khoản
+          </h1>
+          <p style={{ fontSize: '14px', color: '#666' }}>
+            Tạo tài khoản để nhận vô vàn ưu đãi hấp dẫn.
+          </p>
+        </div>
 
-        <form onSubmit={handleRegister}>
-          <div className="form-group">
-            <label className="form-label">Họ và tên</label>
-            <input type="text" name="fullName" required className="form-input"
-              placeholder="Nguyễn Văn A" value={formData.fullName} onChange={handleChange} />
-          </div>
-          <div className="form-group">
-            <label className="form-label">Email</label>
-            <input type="email" name="email" required className="form-input"
-              placeholder="email@example.com" value={formData.email} onChange={handleChange} />
-          </div>
-          <div className="form-group">
-            <label className="form-label">Mật khẩu</label>
-            <input type="password" name="password" required className="form-input"
-              placeholder="Tối thiểu 6 ký tự" value={formData.password} onChange={handleChange} />
-          </div>
-          <div className="form-group">
-            <label className="form-label">Số điện thoại</label>
-            <input type="text" name="phone" required className="form-input"
-              placeholder="0901 234 567" value={formData.phone} onChange={handleChange} />
-          </div>
-          <div className="form-group">
-            <label className="form-label">Địa chỉ</label>
-            <input type="text" name="address" required className="form-input"
-              placeholder="Số nhà, đường, quận, thành phố" value={formData.address} onChange={handleChange} />
-          </div>
-          <button type="submit" className="auth-submit-btn" disabled={loading}>
-            {loading ? 'Đang đăng ký...' : 'Đăng Ký Ngay'}
-          </button>
-        </form>
+        <RegisterForm />
 
-        <p className="auth-footer-text">
-          Đã có tài khoản? <Link to="/login">Đăng nhập</Link>
-        </p>
+        <div style={{ marginTop: '24px', textAlign: 'center', fontSize: '14px', color: '#666', borderTop: '1px solid #eee', paddingTop: '20px' }}>
+          Đã có tài khoản?{' '}
+          <Link to="/login" style={{ color: 'var(--primary, #326e51)', fontWeight: '700', textDecoration: 'none' }}>
+            Đăng nhập ngay
+          </Link>
+        </div>
+
       </div>
     </div>
   );

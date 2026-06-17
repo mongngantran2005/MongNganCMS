@@ -1,39 +1,40 @@
 import React from 'react';
-import { useLocation, Link } from 'react-router-dom';
-import { CheckCircle, Package, ArrowRight } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { CheckCircle } from 'lucide-react';
 
 function OrderSuccessPage() {
   const location = useLocation();
-  const orderId = location.state?.orderId;
+  const orderId = location.state?.orderId || 'N/A';
 
   return (
-    <div style={{ backgroundColor: '#f5f5f5', minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' }}>
-      <div style={{ backgroundColor: '#fff', borderRadius: '12px', padding: '50px 40px', textAlign: 'center', maxWidth: '480px', width: '100%', boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}>
-        {/* Success Icon */}
-        <div style={{ width: '80px', height: '80px', backgroundColor: '#f0fdf4', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+    <div style={{ backgroundColor: '#f5f5f5', minHeight: '70vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' }}>
+      <div style={{ backgroundColor: '#fff', borderRadius: '12px', padding: '50px 30px', textAlign: 'center', maxWidth: '500px', width: '100%', boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
+        
+        <div style={{ width: '80px', height: '80px', borderRadius: '50%', backgroundColor: '#f0fdf4', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
           <CheckCircle size={48} color="#16a34a" />
         </div>
 
-        <h1 style={{ fontSize: '24px', fontWeight: '800', color: '#1a1a1a', marginBottom: '10px' }}>Đặt hàng thành công!</h1>
-        <p style={{ fontSize: '15px', color: '#666', marginBottom: '24px', lineHeight: '1.6' }}>
-          Cảm ơn bạn đã mua hàng. Đơn hàng của bạn đang được xử lý và sẽ sớm được giao đến tay bạn.
+        <h1 style={{ fontSize: '24px', fontWeight: '800', color: '#1a1a1a', marginBottom: '12px' }}>
+          Đặt Hàng Thành Công!
+        </h1>
+        
+        <p style={{ fontSize: '15px', color: '#555', lineHeight: '1.6', marginBottom: '24px' }}>
+          Cảm ơn bạn đã mua sắm tại MongNganCMS. Đơn hàng của bạn đang được xử lý.
         </p>
 
-        {orderId && (
-          <div style={{ backgroundColor: '#f9f9f9', borderRadius: '8px', padding: '14px 20px', marginBottom: '28px', border: '1px solid #eee' }}>
-            <div style={{ fontSize: '13px', color: '#888', marginBottom: '4px' }}>Mã đơn hàng</div>
-            <div style={{ fontSize: '20px', fontWeight: '800', color: '#ee4d2d' }}>#{orderId}</div>
+        <div style={{ backgroundColor: '#fafafa', border: '1px dashed #ddd', borderRadius: '8px', padding: '16px', marginBottom: '32px' }}>
+          <span style={{ fontSize: '14px', color: '#666' }}>Mã đơn hàng của bạn:</span>
+          <div style={{ fontSize: '20px', fontWeight: '800', color: 'var(--primary, #326e51)', marginTop: '8px', letterSpacing: '1px' }}>
+            #{orderId}
           </div>
-        )}
+        </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          <Link to="/profile" state={{ tab: 'orders' }}
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', backgroundColor: '#ee4d2d', color: '#fff', padding: '13px', borderRadius: '8px', textDecoration: 'none', fontSize: '15px', fontWeight: '700' }}>
-            <Package size={18} /> Xem đơn hàng của tôi
+        <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+          <Link to="/products" style={{ flex: 1, textDecoration: 'none', padding: '14px', backgroundColor: 'var(--primary, #326e51)', color: '#fff', borderRadius: '8px', fontWeight: '700', fontSize: '15px', transition: 'background 0.2s' }}>
+            Tiếp Tục Mua Sắm
           </Link>
-          <Link to="/products"
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', backgroundColor: '#fff', color: '#333', padding: '13px', borderRadius: '8px', textDecoration: 'none', fontSize: '15px', fontWeight: '600', border: '1px solid #ddd' }}>
-            Tiếp tục mua sắm <ArrowRight size={16} />
+          <Link to="/profile" style={{ flex: 1, textDecoration: 'none', padding: '14px', backgroundColor: '#fff', color: '#555', border: '1px solid #ddd', borderRadius: '8px', fontWeight: '700', fontSize: '15px', transition: 'background 0.2s' }}>
+            Xem Đơn Hàng
           </Link>
         </div>
       </div>

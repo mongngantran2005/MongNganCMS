@@ -1,25 +1,20 @@
 import axios from 'axios';
 
-// Base URL for the ASP.NET Core Backend WebAPI
-const API_BASE_URL = 'http://localhost:5188/api';
+export const BACKEND_URL = 'http://localhost:5188';
+export const API_BASE_URL = `${BACKEND_URL}/api`;
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  headers: { 'Content-Type': 'application/json' },
 });
 
-// Post endpoints
-export const getPosts = async () => {
-  const response = await apiClient.get('/posts');
-  return response.data;
-};
-
-// Product endpoints
-export const getProducts = async () => {
-  const response = await apiClient.get('/products');
-  return response.data;
-};
+// Tự động gắn JWT token vào header nếu có
+apiClient.interceptors.request.use((config) => {
+  const customerInfo = JSON.parse(localStorage.getItem('customerInfo'));
+  if (customerInfo?.token) {
+    config.headers.Authorization = `Bearer ${customerInfo.token}`;
+  }
+  return config;
+});
 
 export default apiClient;

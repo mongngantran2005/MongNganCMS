@@ -11,8 +11,8 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import CheckoutPage from './pages/CheckoutPage';
 import OrderSuccessPage from './pages/OrderSuccessPage';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
+import Navbar from './components/Common/Navbar';
+import Footer from './components/Common/Footer';
 import './App.css';
 
 function App() {
