@@ -14,7 +14,7 @@ function PaymentMethod({ selected, onChange }) {
   return (
     <div>
       <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#333', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <span style={{ color: 'var(--primary, #326e51)' }}>03</span> Phương Thức Thanh Toán
+        <span style={{ color: '#306E51' }}>03</span> Phương Thức Thanh Toán
       </h3>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -26,9 +26,9 @@ function PaymentMethod({ selected, onChange }) {
               display: 'flex', alignItems: 'center', gap: '12px',
               padding: '13px 16px', borderRadius: '8px', cursor: 'pointer',
               border: selected === method.value
-                ? '2px solid var(--primary, #326e51)'
+                ? '2px solid #306E51'
                 : '2px solid #eee',
-              backgroundColor: selected === method.value ? '#f0faf5' : '#fff',
+              backgroundColor: selected === method.value ? '#CFEADD' : '#fff',
               transition: 'all 0.2s',
             }}
           >
@@ -38,7 +38,7 @@ function PaymentMethod({ selected, onChange }) {
               value={method.value}
               checked={selected === method.value}
               onChange={() => onChange(method.value)}
-              style={{ width: '16px', height: '16px', accentColor: 'var(--primary, #326e51)', flexShrink: 0 }}
+              style={{ width: '16px', height: '16px', accentColor: '#306E51', flexShrink: 0 }}
             />
             <span style={{ fontSize: '18px' }}>{method.icon}</span>
             <span style={{ fontSize: '14px', fontWeight: selected === method.value ? '700' : '400', color: '#333' }}>

@@ -17,10 +17,23 @@ namespace CMS.Backend.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int page = 1, int pageSize = 10)
         {
-            // Lấy TẤT CẢ dữ liệu thật từ bảng Categories trong SQL Server
-            var categories = _context.Categories.ToList();
+            var query = _context.Categories.AsQueryable();
+
+            int totalCount = query.Count();
+            int totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+            var categories = query
+                .OrderBy(c => c.Name)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            ViewData["CurrentPage"] = page;
+            ViewData["TotalPages"] = Math.Max(1, totalPages);
+            ViewData["TotalCount"] = totalCount;
+            ViewData["PageSize"] = pageSize;
 
             // Đẩy sang View
             return View(categories);

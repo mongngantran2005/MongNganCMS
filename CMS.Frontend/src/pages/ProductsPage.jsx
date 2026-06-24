@@ -106,8 +106,17 @@ function ProductsPage() {
             <SortProduct value={sortValue} onChange={setSortValue} />
           </div>
 
-          <ProductList products={pagedProducts} loading={loading} />
-          <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
+          {!loading && processed.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '50px 20px', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+              <img src="https://cdn-icons-png.flaticon.com/512/2748/2748558.png" alt="No results" style={{ width: '100px', opacity: 0.5, marginBottom: '20px' }} />
+              <h3 style={{ fontSize: '18px', color: '#666' }}>Không tìm thấy sản phẩm nào phù hợp với tiêu chí của bạn.</h3>
+            </div>
+          ) : (
+            <>
+              <ProductList products={pagedProducts} loading={loading} />
+              <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
+            </>
+          )}
         </div>
       </div>
     </div>

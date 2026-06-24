@@ -1,0 +1,68 @@
+@* Partial View: _Pagination.cshtml
+   Usage: @await Html.PartialAsync("_Pagination", new ViewDataDictionary(ViewData) {
+       { "CurrentPage", currentPage },
+       { "TotalPages", totalPages },
+       { "TotalCount", totalCount },
+       { "PageSize", pageSize }
+   })
+*@
+@{
+    int currentPage = ViewData["CurrentPage"] != null ? (int)ViewData["CurrentPage"]! : 1;
+    int totalPages = ViewData["TotalPages"] != null ? (int)ViewData["TotalPages"]! : 1;
+    int totalCount = ViewData["TotalCount"] != null ? (int)ViewData["TotalCount"]! : 0;
+    int pageSize = ViewData["PageSize"] != null ? (int)ViewData["PageSize"]! : 10;
+
+    int start = totalCount == 0 ? 0 : (currentPage - 1) * pageSize + 1;
+    int end = Math.Min(currentPage * pageSize, totalCount);
+}
+
+<div class="d-flex justify-content-between align-items-center p-3 border-top" style="background-color: #fff; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
+    <div class="text-muted" style="font-size: 14px;">
+        Hiển thị <strong>@start</strong> – <strong>@end</strong> trong tổng số <strong>@totalCount</strong> bản ghi
+    </div>
+    @if (totalPages > 1)
+    {
+        <nav>
+            <ul class="pagination pagination-sm mb-0">
+                <!-- First -->
+                <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                    <a class="page-link" asp-route-page="1">
+                        <i class="bi bi-chevron-double-left"></i>
+                    </a>
+                </li>
+                <!-- Prev -->
+                <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                    <a class="page-link" asp-route-page="@(currentPage - 1)">
+                        <i class="bi bi-chevron-left"></i>
+                    </a>
+                </li>
+
+                @{
+                    int startPage = Math.Max(1, currentPage - 2);
+                    int endPage = Math.Min(totalPages, currentPage + 2);
+                }
+
+                @for (int i = startPage; i <= endPage; i++)
+                {
+                    <li class="page-item @(i == currentPage ? "active" : "")">
+                        <a class="page-link" asp-route-page="@i"
+                           style="@(i == currentPage ? "background-color: #306E51; border-color: #306E51;" : "")">@i</a>
+                    </li>
+                }
+
+                <!-- Next -->
+                <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                    <a class="page-link" asp-route-page="@(currentPage + 1)">
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                </li>
+                <!-- Last -->
+                <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                    <a class="page-link" asp-route-page="@totalPages">
+                        <i class="bi bi-chevron-double-right"></i>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    }
+</div>

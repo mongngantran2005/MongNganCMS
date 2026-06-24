@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,6 +16,10 @@ namespace CMS.Data.Entities
         public int CustomerId { get; set; }
         public int Status { get; set; } // 0: Chờ duyệt, 1: Đang giao, 2: Đã xong
         public string? Notes { get; set; }
+        public string? FullName { get; set; }
+        public string? Phone { get; set; }
+        public string? ShippingAddress { get; set; }
+        public string? PaymentMethod { get; set; }
 
         [ForeignKey("CustomerId")]
         public virtual Customer? Customer { get; set; }

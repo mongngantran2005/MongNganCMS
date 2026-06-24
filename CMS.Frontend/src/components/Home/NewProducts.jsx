@@ -21,7 +21,7 @@ function NewProducts({ products = [], loading = false }) {
 
       {loading ? (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '14px' }}>
-          {Array.from({ length: 5 }).map((_, i) => (
+          {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} style={{ height: '280px', backgroundColor: '#f0f0f0', borderRadius: '8px', animation: 'pulse 1.5s infinite' }} />
           ))}
         </div>

@@ -36,7 +36,7 @@ function OrderSummary({ items }) {
               </p>
               <span style={{ fontSize: '12px', color: '#999' }}>x{item.quantity}</span>
             </div>
-            <div style={{ flexShrink: 0, fontSize: '14px', fontWeight: '700', color: '#ee4d2d' }}>
+            <div style={{ flexShrink: 0, fontSize: '14px', fontWeight: '700', color: '#FF6600' }}>
               {formatPrice(item.price * item.quantity)}
             </div>
           </div>
@@ -47,12 +47,12 @@ function OrderSummary({ items }) {
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '14px', color: '#666' }}>
           <span>Tạm tính:</span><span>{formatPrice(total)}</span>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '14px', color: '#16a34a' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '14px', color: '#059852' }}>
           <span>Phí vận chuyển:</span><span>Miễn phí</span>
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '12px', paddingTop: '12px', borderTop: '1px solid #eee' }}>
           <span style={{ fontSize: '16px', fontWeight: '700', color: '#333' }}>Tổng cộng:</span>
-          <span style={{ fontSize: '20px', fontWeight: '800', color: '#ee4d2d' }}>{formatPrice(total)}</span>
+          <span style={{ fontSize: '20px', fontWeight: '700', color: '#FF6600' }}>{formatPrice(total)}</span>
         </div>
       </div>
     </div>

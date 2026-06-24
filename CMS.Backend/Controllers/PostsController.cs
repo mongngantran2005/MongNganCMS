@@ -27,10 +27,16 @@ namespace CMS.Backend.Controllers
         // URL: GET https://localhost:xxxx/api/posts
         // =====================================================================
         [HttpGet]
-        public IActionResult GetAll()
+        public IActionResult GetAll([FromQuery] int? limit = null)
         {
-            var posts = _context.Posts
-                .OrderByDescending(p => p.Id) // Sắp xếp bài mới nhất lên đầu
+            var query = _context.Posts.OrderByDescending(p => p.Id).AsQueryable();
+            
+            if (limit.HasValue && limit.Value > 0)
+            {
+                query = query.Take(limit.Value);
+            }
+
+            var posts = query
                 .Select(p => new {           // Chỉ lấy các trường cần thiết
                     p.Id,
                     p.Title,

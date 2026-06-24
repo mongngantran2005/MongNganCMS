@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using CMS.Data; 
 using Microsoft.AspNetCore.Authentication.Cookies;
+using CMS.Backend.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 // Đăng ký ApplicationDbContext
@@ -15,6 +16,9 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+
+// Đăng ký dịch vụ Gửi Mail
+builder.Services.AddScoped<IEmailSender, EmailSender>();
 
 // 1. Khai báo dịch vụ xác thực Cookie
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

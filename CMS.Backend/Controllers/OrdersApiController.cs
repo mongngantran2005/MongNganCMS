@@ -3,7 +3,7 @@ using CMS.Data;
 using CMS.Data.Entities;
 using System;
 using System.Collections.Generic;
-
+using System.Linq;
 namespace CMS.Backend.Controllers
 {
     [Route("api/orders")]
@@ -11,15 +11,22 @@ namespace CMS.Backend.Controllers
     public class OrdersApiController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly CMS.Backend.Services.IEmailSender _emailSender;
 
-        public OrdersApiController(ApplicationDbContext context)
+        public OrdersApiController(ApplicationDbContext context, CMS.Backend.Services.IEmailSender emailSender)
         {
             _context = context;
+            _emailSender = emailSender;
         }
 
         public class OrderRequest
         {
             public int CustomerId { get; set; }
+            public string FullName { get; set; }
+            public string Email { get; set; }
+            public string Phone { get; set; }
+            public string ShippingAddress { get; set; }
+            public string PaymentMethod { get; set; }
             public string Notes { get; set; }
             public List<OrderDetailRequest> Items { get; set; }
         }
@@ -50,7 +57,11 @@ namespace CMS.Backend.Controllers
                     CustomerId = request.CustomerId,
                     OrderDate = DateTime.Now,
                     Status = 0, // Chờ duyệt
-                    Notes = request.Notes
+                    Notes = request.Notes,
+                    FullName = request.FullName,
+                    Phone = request.Phone,
+                    ShippingAddress = request.ShippingAddress,
+                    PaymentMethod = request.PaymentMethod
                 };
 
                 _context.Orders.Add(order);
@@ -78,6 +89,15 @@ namespace CMS.Backend.Controllers
 
                 _context.SaveChanges();
                 transaction.Commit();
+
+                if (!string.IsNullOrEmpty(request.Email))
+                {
+                    string subject = $"Xác nhận đơn hàng #{order.Id} từ MongNganCMS";
+                    string body = $"<h3>Chào {request.FullName},</h3>" +
+                                  $"<p>Cảm ơn bạn đã đặt hàng. Mã đơn hàng của bạn là <b>#{order.Id}</b>.</p>" +
+                                  $"<p>Chúng tôi sẽ sớm liên hệ để giao hàng.</p>";
+                    _ = _emailSender.SendEmailAsync(request.Email, subject, body);
+                }
 
                 return Ok(new { message = "Đặt hàng thành công", orderId = order.Id });
             }
@@ -113,6 +133,143 @@ namespace CMS.Backend.Controllers
                 .ToList();
 
             return Ok(orders);
+        }
+
+        [HttpGet("{id}")]
+        public IActionResult GetOrderById(int id)
+        {
+            var order = _context.Orders
+                .Where(o => o.Id == id)
+                .Select(o => new {
+                    o.Id,
+                    o.OrderDate,
+                    o.Status,
+                    o.Notes,
+                    o.FullName,
+                    o.Phone,
+                    o.ShippingAddress,
+                    o.PaymentMethod,
+                    TotalAmount = _context.OrderDetails.Where(od => od.OrderId == o.Id).Sum(od => od.Quantity * od.UnitPrice),
+                    Items = _context.OrderDetails
+                        .Where(od => od.OrderId == o.Id)
+                        .Select(od => new {
+                            od.ProductId,
+                            od.Quantity,
+                            od.UnitPrice,
+                            ProductName = _context.Products.FirstOrDefault(p => p.Id == od.ProductId).Name,
+                            ImageUrl = _context.Products.FirstOrDefault(p => p.Id == od.ProductId).ImageUrl
+                        }).ToList()
+                })
+                .FirstOrDefault();
+
+            if (order == null) return NotFound();
+
+            return Ok(order);
+        }
+
+        [HttpPut("{id}/cancel")]
+        public IActionResult CancelOrder(int id)
+        {
+            var order = _context.Orders.Find(id);
+            if (order == null) return NotFound();
+
+            if (order.Status != 0)
+            {
+                return BadRequest(new { message = "Chỉ có thể hủy đơn hàng khi đang ở trạng thái Chờ xác nhận." });
+            }
+
+            order.Status = 4; // 4 = Đã hủy
+            _context.SaveChanges();
+
+            return Ok(new { message = "Hủy đơn hàng thành công" });
+        }
+
+        public class UpdateMultipleRequest
+        {
+            public List<int> OrderIds { get; set; }
+            public int Status { get; set; }
+        }
+
+        [HttpPut("update-multiple")]
+        public IActionResult UpdateMultipleOrders([FromBody] UpdateMultipleRequest request)
+        {
+            if (request.OrderIds == null || request.OrderIds.Count == 0)
+                return BadRequest(new { message = "Không có đơn hàng nào được chọn." });
+
+            var orders = _context.Orders.Where(o => request.OrderIds.Contains(o.Id)).ToList();
+            int count = 0;
+            
+            foreach (var order in orders)
+            {
+                // Optionally validate status transitions here if needed
+                // 0: Chờ xác nhận, 1: Chờ vận chuyển, 2: Chờ giao hàng, 3: Hoàn thành, 4: Đã hủy
+                order.Status = request.Status;
+                count++;
+            }
+
+            if (count > 0)
+            {
+                _context.SaveChanges();
+            }
+
+            return Ok(new { message = $"Đã cập nhật trạng thái {count} đơn hàng thành công." });
+        }
+
+        [HttpGet("admin/search")]
+        public IActionResult GetAdminOrders([FromQuery] string? keyword, [FromQuery] int? status, [FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        {
+            var query = _context.Orders.AsQueryable();
+
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                query = query.Where(o => 
+                    (o.Id.ToString() == keyword) || 
+                    (o.FullName != null && o.FullName.Contains(keyword)) ||
+                    (o.Phone != null && o.Phone.Contains(keyword)) ||
+                    (o.Customer != null && o.Customer.FullName.Contains(keyword)) ||
+                    (o.Customer != null && o.Customer.Phone.Contains(keyword)));
+            }
+
+            if (status.HasValue && status.Value != -1)
+            {
+                query = query.Where(o => o.Status == status.Value);
+            }
+
+            if (startDate.HasValue)
+            {
+                query = query.Where(o => o.OrderDate.Date >= startDate.Value.Date);
+            }
+
+            if (endDate.HasValue)
+            {
+                query = query.Where(o => o.OrderDate.Date <= endDate.Value.Date);
+            }
+
+            int totalCount = query.Count();
+            int totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+            var orders = query
+                .OrderByDescending(o => o.OrderDate)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(o => new {
+                    o.Id,
+                    o.OrderDate,
+                    o.Status,
+                    o.Notes,
+                    FullName = o.Customer != null ? o.Customer.FullName : o.FullName,
+                    Phone = o.Customer != null ? o.Customer.Phone : o.Phone,
+                    TotalAmount = _context.OrderDetails.Where(od => od.OrderId == o.Id).Sum(od => od.Quantity * od.UnitPrice)
+                })
+                .ToList();
+
+            return Ok(new {
+                items = orders,
+                totalCount,
+                totalPages,
+                page,
+                pageSize
+            });
         }
     }
 }

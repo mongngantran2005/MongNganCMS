@@ -17,11 +17,22 @@ namespace CMS.Backend.Controllers
         }
 
         // GET: /Customer
-        public IActionResult Index()
+        public IActionResult Index(int page = 1, int pageSize = 10)
         {
-            var customers = _context.Customers
-                .OrderBy(c => c.FullName)
+            var query = _context.Customers.OrderBy(c => c.FullName);
+
+            int totalCount = query.Count();
+            int totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+            var customers = query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .ToList();
+
+            ViewData["CurrentPage"] = page;
+            ViewData["TotalPages"] = Math.Max(1, totalPages);
+            ViewData["TotalCount"] = totalCount;
+            ViewData["PageSize"] = pageSize;
 
             return View(customers);
         }

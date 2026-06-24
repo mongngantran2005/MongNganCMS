@@ -13,13 +13,9 @@
         :root {
             --sidebar-bg: #0f172a;
             --sidebar-hover: #1e293b;
-            --sidebar-active: #3b82f6;
             --sidebar-text: #94a3b8;
-            --sidebar-text-active: #ffffff;
-            --sidebar-width: 260px;
+            --sidebar-width: 240px;
             --topbar-height: 60px;
-            --accent: #3b82f6;
-            --accent-hover: #2563eb;
         }
 
         * { box-sizing: border-box; }
@@ -42,118 +38,156 @@
             display: flex;
             flex-direction: column;
             z-index: 1000;
-            overflow-y: auto;
-            overflow-x: hidden;
+            overflow: hidden; /* No overflow on sidebar itself */
             box-shadow: 4px 0 20px rgba(0,0,0,0.15);
-            transition: transform 0.3s ease;
         }
 
         .sidebar-brand {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 20px 22px;
+            padding: 0 20px;
+            height: var(--topbar-height);
             border-bottom: 1px solid rgba(255,255,255,0.07);
             text-decoration: none;
-        }
-
-        .sidebar-brand-icon {
-            width: 38px;
-            height: 38px;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            color: white;
-            flex-shrink: 0;
-        }
-
-        .sidebar-brand-text {
-            display: flex;
-            flex-direction: column;
+            flex-shrink: 0; /* Never shrink */
         }
 
         .sidebar-brand-title {
             font-size: 15px;
-            font-weight: 700;
+            font-weight: 800;
             color: #f8fafc;
-            letter-spacing: 0.3px;
-            line-height: 1.2;
-        }
-
-        .sidebar-brand-sub {
-            font-size: 11px;
-            color: #64748b;
-            font-weight: 400;
-            letter-spacing: 0.5px;
+            letter-spacing: 2px;
             text-transform: uppercase;
         }
 
+        /* Scrollable nav area only */
         .sidebar-nav {
             flex: 1;
-            padding: 16px 12px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 10px 10px 16px;
         }
+
+        .sidebar-nav::-webkit-scrollbar { width: 3px; }
+        .sidebar-nav::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
 
         .nav-section-label {
             font-size: 10px;
-            font-weight: 600;
+            font-weight: 700;
             color: #475569;
             text-transform: uppercase;
             letter-spacing: 1.2px;
-            padding: 12px 10px 6px;
-            margin-top: 8px;
+            padding: 14px 10px 5px;
         }
 
-        .nav-section-label:first-child {
-            margin-top: 0;
-        }
-
+        /* Standard nav link */
         .sidebar-link {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 10px 12px;
-            border-radius: 8px;
+            padding: 9px 12px;
+            border-radius: 7px;
             color: var(--sidebar-text);
             text-decoration: none;
-            font-size: 13.5px;
+            font-size: 13px;
             font-weight: 500;
             transition: all 0.2s ease;
-            margin-bottom: 2px;
+            margin-bottom: 1px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
         }
 
-        .sidebar-link:hover {
+        .sidebar-link:hover, .sidebar-link:focus {
+            background: var(--sidebar-hover);
+            color: #e2e8f0;
+            outline: none;
+            text-decoration: none;
+        }
+
+        .sidebar-link.active {
+            background: linear-gradient(135deg, #306E51, #1a4d38);
+            color: #ffffff !important;
+            box-shadow: 0 4px 12px rgba(48,110,81,0.35);
+        }
+
+        /* Accordion toggle */
+        .sidebar-group-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 9px 12px;
+            border-radius: 7px;
+            color: var(--sidebar-text);
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            margin-bottom: 1px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .sidebar-group-toggle:hover {
             background: var(--sidebar-hover);
             color: #e2e8f0;
         }
 
-        .sidebar-link.active {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            color: #ffffff;
-            box-shadow: 0 4px 12px rgba(59,130,246,0.35);
+        .sidebar-group-toggle.active-group {
+            color: #cbd5e1;
         }
 
-        .sidebar-link i {
-            font-size: 16px;
+        .toggle-icon {
+            font-size: 11px;
+            transition: transform 0.25s ease;
             flex-shrink: 0;
-            width: 20px;
-            text-align: center;
         }
 
-        .sidebar-link .badge-count {
-            margin-left: auto;
-            font-size: 10px;
-            background: rgba(255,255,255,0.15);
-            color: #94a3b8;
-            padding: 2px 7px;
-            border-radius: 10px;
+        .sidebar-group-toggle.open .toggle-icon {
+            transform: rotate(90deg);
         }
 
+        /* Submenu */
+        .sidebar-submenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .sidebar-submenu.open {
+            max-height: 400px;
+        }
+
+        .sidebar-submenu .sidebar-link {
+            font-size: 12.5px;
+            padding: 7px 12px 7px 24px;
+            color: #64748b;
+            position: relative;
+        }
+
+        .sidebar-submenu .sidebar-link::before {
+            content: '';
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: #475569;
+            transition: background 0.2s;
+        }
+
+        .sidebar-submenu .sidebar-link:hover { color: #e2e8f0; }
+        .sidebar-submenu .sidebar-link:hover::before { background: #306E51; }
+        .sidebar-submenu .sidebar-link.active::before { background: #4ade80; }
+
+        /* Fixed footer */
         .sidebar-footer {
-            padding: 14px 12px;
+            padding: 12px;
             border-top: 1px solid rgba(255,255,255,0.07);
+            flex-shrink: 0;
         }
 
         .sidebar-user {
@@ -163,25 +197,6 @@
             padding: 10px 12px;
             border-radius: 8px;
             background: rgba(255,255,255,0.04);
-        }
-
-        .sidebar-user-avatar {
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #10b981, #059669);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 14px;
-            font-weight: 600;
-            flex-shrink: 0;
-        }
-
-        .sidebar-user-info {
-            flex: 1;
-            min-width: 0;
         }
 
         .sidebar-user-name {
@@ -218,6 +233,7 @@
             top: 0;
             z-index: 100;
             box-shadow: 0 1px 8px rgba(0,0,0,0.05);
+            flex-shrink: 0;
         }
 
         .topbar-title {
@@ -244,17 +260,8 @@
             font-weight: 500;
         }
 
-        .topbar-badge-admin {
-            background: #eff6ff;
-            color: #3b82f6;
-            border: 1px solid #bfdbfe;
-        }
-
-        .topbar-badge-editor {
-            background: #f0fdf4;
-            color: #16a34a;
-            border: 1px solid #bbf7d0;
-        }
+        .topbar-badge-admin { background: #eff6ff; color: #3b82f6; border: 1px solid #bfdbfe; }
+        .topbar-badge-editor { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
 
         .btn-logout {
             display: flex;
@@ -271,11 +278,7 @@
             transition: all 0.2s;
         }
 
-        .btn-logout:hover {
-            background: #fef2f2;
-            color: #dc2626;
-            border-color: #fecaca;
-        }
+        .btn-logout:hover { background: #fef2f2; color: #dc2626; border-color: #fecaca; }
 
         /* === CONTENT AREA === */
         .admin-content {
@@ -283,39 +286,30 @@
             padding: 28px 32px;
         }
 
-        /* === CARD OVERRIDES === */
-        .card {
-            border: none;
-            border-radius: 12px;
-            box-shadow: 0 1px 8px rgba(0,0,0,0.06);
-        }
-
-        .card-header {
-            border-radius: 12px 12px 0 0 !important;
-            border-bottom: 1px solid rgba(0,0,0,0.06);
-            padding: 16px 20px;
-        }
-
-        .table {
-            font-size: 13.5px;
-        }
-
-        .table thead th {
-            font-weight: 600;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .btn {
+        /* === GLOBAL: icon-only edit button (same size as trash) === */
+        .btn-edit-icon {
+            background-color: #fef3c7 !important;
+            color: #d97706 !important;
+            border: 1px solid #fde68a !important;
+            border-radius: 6px !important;
+            padding: 4px 8px !important;
             font-size: 13px;
-            font-weight: 500;
+            line-height: 1.5;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
         }
 
-        /* === SCROLLBAR === */
-        .admin-sidebar::-webkit-scrollbar { width: 4px; }
-        .admin-sidebar::-webkit-scrollbar-track { background: transparent; }
-        .admin-sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+        .btn-edit-icon:hover {
+            background-color: #fde68a !important;
+            color: #92400e !important;
+        }
+
+        /* === CARD / TABLE OVERRIDES === */
+        .card { border: none; border-radius: 12px; box-shadow: 0 1px 8px rgba(0,0,0,0.06); }
+        .table { font-size: 13.5px; }
+        .table thead th { font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .btn { font-size: 13px; font-weight: 500; }
 
         /* === RESPONSIVE === */
         @@media (max-width: 768px) {
@@ -328,64 +322,73 @@
 
     <!-- SIDEBAR -->
     <nav class="admin-sidebar">
-        <!-- Brand -->
+        <!-- Brand - fixed at top -->
         <a class="sidebar-brand" href="/">
-            <div class="sidebar-brand-icon"><i class="bi bi-layers-half"></i></div>
-            <div class="sidebar-brand-text">
-                <span class="sidebar-brand-title">MongNgan CMS</span>
-                <span class="sidebar-brand-sub">Admin Panel</span>
-            </div>
+            <span class="sidebar-brand-title">Shop Admin</span>
         </a>
 
-        <!-- Nav items -->
+        <!-- Nav items - ONLY this div scrolls -->
         <div class="sidebar-nav">
-            <!-- CMS -->
-            <div class="nav-section-label">Nội dung CMS</div>
-            <a asp-controller="Home" asp-action="Dashboard" class="sidebar-link">
-                <i class="bi bi-speedometer2"></i> Bảng điều khiển
-            </a>
-            <a asp-controller="Category" asp-action="Index" class="sidebar-link">
-                <i class="bi bi-grid-3x3-gap"></i> Quản lý Danh mục
-            </a>
-            <a asp-controller="Post" asp-action="Index" class="sidebar-link">
-                <i class="bi bi-file-earmark-text"></i> Quản lý Bài viết
-            </a>
-            <a asp-controller="Banners" asp-action="Index" class="sidebar-link">
-                <i class="bi bi-images"></i> Quản lý Banner
-            </a>
-            @if (User.IsInRole("Admin"))
-            {
-                <a asp-controller="User" asp-action="Index" class="sidebar-link">
-                    <i class="bi bi-people"></i> Quản lý Thành viên
-                    <span class="badge-count">Admin</span>
-                </a>
-            }
 
-            <!-- Shop -->
+            <div class="nav-section-label">Dashboard</div>
+            <a asp-controller="Home" asp-action="Dashboard" class="sidebar-link">
+                Bảng điều khiển
+            </a>
+
+            <div class="nav-section-label">Nội dung</div>
+
+            <div class="sidebar-group-toggle" onclick="toggleGroup(this)">
+                <span>Bài viết</span>
+                <i class="bi bi-chevron-right toggle-icon"></i>
+            </div>
+            <div class="sidebar-submenu">
+                <a asp-controller="Category" asp-action="Index" class="sidebar-link">Danh mục bài viết</a>
+                <a asp-controller="Post" asp-action="Index" class="sidebar-link">Quản lý bài viết</a>
+            </div>
+
+            <a href="/Banners" class="sidebar-link">Quản lý Banner</a>
+
             <div class="nav-section-label">Cửa hàng</div>
-            <a asp-controller="ProductCategory" asp-action="Index" class="sidebar-link">
-                <i class="bi bi-tags"></i> Danh mục sản phẩm
-            </a>
-            <a asp-controller="Product" asp-action="Index" class="sidebar-link">
-                <i class="bi bi-box-seam"></i> Sản phẩm
-            </a>
-            <a asp-controller="Customer" asp-action="Index" class="sidebar-link">
-                <i class="bi bi-person-badge"></i> Khách hàng
-            </a>
-            <a asp-controller="Order" asp-action="Index" class="sidebar-link">
-                <i class="bi bi-cart3"></i> Đơn hàng
-            </a>
-            <a asp-controller="OrderDetail" asp-action="Index" class="sidebar-link">
-                <i class="bi bi-list-check"></i> Chi tiết đơn hàng
-            </a>
+
+            <div class="sidebar-group-toggle" onclick="toggleGroup(this)">
+                <span>Sản phẩm</span>
+                <i class="bi bi-chevron-right toggle-icon"></i>
+            </div>
+            <div class="sidebar-submenu">
+                <a asp-controller="ProductCategory" asp-action="Index" class="sidebar-link">Danh mục sản phẩm</a>
+                <a asp-controller="Product" asp-action="Index" class="sidebar-link">Sản phẩm</a>
+            </div>
+
+            <a asp-controller="Customer" asp-action="Index" class="sidebar-link">Khách hàng</a>
+            <a asp-controller="Order" asp-action="Index" class="sidebar-link">Đơn hàng</a>
+
+            <div class="nav-section-label">Hệ thống</div>
+
+            <div class="sidebar-group-toggle" onclick="toggleGroup(this)">
+                <span>Thành viên</span>
+                <i class="bi bi-chevron-right toggle-icon"></i>
+            </div>
+            <div class="sidebar-submenu">
+                <a asp-controller="User" asp-action="Index" class="sidebar-link">Danh sách thành viên</a>
+                <a href="#" class="sidebar-link">Phân quyền</a>
+            </div>
+
+            <div class="sidebar-group-toggle" onclick="toggleGroup(this)">
+                <span>Báo cáo</span>
+                <i class="bi bi-chevron-right toggle-icon"></i>
+            </div>
+            <div class="sidebar-submenu">
+                <a href="#" class="sidebar-link">Doanh thu</a>
+                <a href="#" class="sidebar-link">Thống kê đơn hàng</a>
+            </div>
+
+            <a href="#" class="sidebar-link">Cài đặt</a>
+            <a asp-controller="Account" asp-action="Logout" class="sidebar-link">Đăng xuất</a>
         </div>
 
-        <!-- User info at bottom -->
+        <!-- User info - fixed at bottom -->
         <div class="sidebar-footer">
             <div class="sidebar-user">
-                <div class="sidebar-user-avatar">
-                    <i class="bi bi-person"></i>
-                </div>
                 <div class="sidebar-user-info">
                     @if (User.Identity != null && User.Identity.IsAuthenticated)
                     {
@@ -404,16 +407,22 @@
 
     <!-- MAIN CONTENT -->
     <div class="admin-main">
-        <!-- Top Bar -->
         <div class="admin-topbar">
             <h1 class="topbar-title">@ViewData["Title"]</h1>
             <div class="topbar-actions">
                 @if (User.Identity != null && User.Identity.IsAuthenticated)
                 {
                     var role = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
-                    <span class="topbar-badge @(role == "Admin" ? "topbar-badge-admin" : "topbar-badge-editor")">
-                        <i class="bi bi-shield-check"></i> @role
-                    </span>
+                    var fullName = User.FindFirst("FullName")?.Value ?? User.Identity.Name;
+                    <div class="d-flex align-items-center gap-2 me-2" style="font-size: 13px; color: #475569;">
+                        <div style="width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, #306E51, #1a4d38); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 12px; flex-shrink: 0;">
+                            @(string.IsNullOrEmpty(fullName) ? "A" : fullName.Substring(0, 1).ToUpper())
+                        </div>
+                        <div>
+                            <div style="font-weight: 600; color: #1e293b; line-height: 1.2;">@fullName</div>
+                            <div style="font-size: 11px; color: #64748b; line-height: 1.2;">@role</div>
+                        </div>
+                    </div>
                     <a asp-controller="Account" asp-action="Logout" class="btn-logout">
                         <i class="bi bi-box-arrow-right"></i> Đăng xuất
                     </a>
@@ -427,7 +436,6 @@
             </div>
         </div>
 
-        <!-- Page Content -->
         <div class="admin-content">
             @RenderBody()
         </div>
@@ -435,6 +443,43 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleGroup(el) {
+            const submenu = el.nextElementSibling;
+            const isOpen = submenu.classList.contains('open');
+            // Close all
+            document.querySelectorAll('.sidebar-submenu.open').forEach(s => s.classList.remove('open'));
+            document.querySelectorAll('.sidebar-group-toggle.open').forEach(t => t.classList.remove('open'));
+            // Open clicked if it was closed
+            if (!isOpen) {
+                submenu.classList.add('open');
+                el.classList.add('open');
+            }
+        }
+
+        // Auto-detect active link on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            const path = window.location.pathname.toLowerCase();
+            // Check submenu links
+            document.querySelectorAll('.sidebar-submenu .sidebar-link').forEach(link => {
+                const href = (link.getAttribute('href') || '').toLowerCase();
+                if (href && href !== '/' && path.startsWith(href)) {
+                    link.classList.add('active');
+                    const sub = link.closest('.sidebar-submenu');
+                    const tog = sub.previousElementSibling;
+                    sub.classList.add('open');
+                    tog.classList.add('open');
+                }
+            });
+            // Check direct links
+            document.querySelectorAll('.sidebar-nav > .sidebar-link').forEach(link => {
+                const href = (link.getAttribute('href') || '').toLowerCase();
+                if (href && href !== '/' && path.startsWith(href)) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

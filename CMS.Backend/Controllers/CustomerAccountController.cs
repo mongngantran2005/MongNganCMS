@@ -54,7 +54,7 @@ namespace CMS.Backend.Controllers
             {
                 FullName = fullName,
                 Email = email,
-                Password = password, // Lưu mật khẩu text thô theo chuẩn db hiện tại
+                Password = BCrypt.Net.BCrypt.HashPassword(password),
                 Phone = phone,
                 Address = address
             };
@@ -86,8 +86,21 @@ namespace CMS.Backend.Controllers
                 return View();
             }
 
-            var customer = _context.Customers.FirstOrDefault(c => c.Email.ToLower() == email.ToLower() && c.Password == password);
+            var customer = _context.Customers.FirstOrDefault(c => c.Email.ToLower() == email.ToLower());
+            bool isPasswordValid = false;
             if (customer != null)
+            {
+                try
+                {
+                    isPasswordValid = BCrypt.Net.BCrypt.Verify(password, customer.Password);
+                }
+                catch
+                {
+                    isPasswordValid = (customer.Password == password);
+                }
+            }
+
+            if (isPasswordValid)
             {
                 // Lưu trạng thái đăng nhập vào Session
                 HttpContext.Session.SetInt32("CustomerId", customer.Id);

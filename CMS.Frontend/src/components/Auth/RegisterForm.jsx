@@ -32,7 +32,7 @@ function RegisterForm() {
     }
     setLoading(true);
     try {
-      await register({ fullName: form.fullName, email: form.email, username: form.username, password: form.password });
+      await register({ fullName: form.fullName, email: form.email, username: form.username, password: form.password, phone: '', address: '' });
       alert('Đăng ký thành công! Vui lòng đăng nhập.');
       navigate('/login');
     } catch (err) {

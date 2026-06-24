@@ -1,0 +1,114 @@
+Hãy nâng cấp trang Quản lý Đơn Hàng trong hệ thống admin bán hàng.
+
+Giữ nguyên giao diện hiện tại, chỉ bổ sung thêm các chức năng quản lý đơn hàng chuyên nghiệp.
+
+Yêu cầu thực hiện:
+
+1. XÁC NHẬN ĐƠN HÀNG HÀNG LOẠT
+- Thêm checkbox chọn từng đơn hàng.
+- Thêm checkbox chọn tất cả ở đầu bảng.
+- Chỉ cho phép chọn các đơn có trạng thái "Chờ xác nhận".
+- Thêm nút "Xác nhận đơn hàng đã chọn".
+- Khi xác nhận:
+    + Cập nhật nhiều đơn cùng lúc.
+    + Chuyển trạng thái:
+        "Chờ xác nhận" → "Chờ vận chuyển".
+    + Không cho phép cập nhật đơn:
+        "Đã hủy", "Hoàn thành".
+- Sau khi thành công:
+    + Hiển thị thông báo.
+    + Reload lại danh sách đơn hàng.
+
+
+2. TÌM KIẾM VÀ LỌC ĐƠN HÀNG
+Thêm khu vực bộ lọc phía trên bảng:
+
+- Ô tìm kiếm:
+    + Tìm theo mã đơn.
+    + Tìm theo tên khách hàng.
+    + Tìm theo số điện thoại.
+
+- Bộ lọc trạng thái:
+    + Tất cả.
+    + Chờ xác nhận.
+    + Chờ vận chuyển.
+    + Đang giao.
+    + Hoàn thành.
+    + Đã hủy.
+
+- Bộ lọc khoảng thời gian:
+    + Ngày bắt đầu.
+    + Ngày kết thúc.
+
+Khi thay đổi bộ lọc:
+- Gọi API lấy dữ liệu mới.
+- Không reload toàn trang.
+
+
+3. THÊM TỔNG TIỀN ĐƠN HÀNG
+Trong bảng danh sách đơn hàng thêm cột:
+
+"Tổng tiền"
+
+Hiển thị:
+Ví dụ:
+1.500.000 VNĐ
+
+Backend trả về:
+- Tổng tiền sản phẩm.
+- Phí vận chuyển.
+- Giảm giá (nếu có).
+- Thành tiền cuối cùng.
+
+
+4. TRANG CHI TIẾT ĐƠN HÀNG
+Khi nhấn nút "Xem":
+
+Tạo trang Order Detail.
+
+Hiển thị:
+
+Thông tin khách hàng:
+- Họ tên.
+- Số điện thoại.
+- Email.
+- Địa chỉ nhận hàng.
+
+Thông tin đơn hàng:
+- Mã đơn.
+- Ngày đặt.
+- Trạng thái.
+- Ghi chú.
+
+Danh sách sản phẩm:
+- Hình ảnh.
+- Tên sản phẩm.
+- Số lượng.
+- Đơn giá.
+- Thành tiền.
+
+Thanh toán:
+- Tổng tiền hàng.
+- Phí ship.
+- Giảm giá.
+- Tổng thanh toán.
+
+
+5. PHÂN TRANG DANH SÁCH ĐƠN HÀNG
+
+Thêm pagination:
+
+Ví dụ:
+
+< 1 2 3 4 5 >
+
+Yêu cầu:
+- Mỗi trang hiển thị 10 hoặc 20 đơn.
+- Có tổng số đơn.
+- Có nút:
+    + Trang đầu.
+    + Trang trước.
+    + Trang sau.
+    + Trang cuối.
+
+

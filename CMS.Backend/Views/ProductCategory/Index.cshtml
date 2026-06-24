@@ -4,79 +4,111 @@
     ViewData["Title"] = "Danh mục sản phẩm";
 }
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="mb-0">📂 Danh Mục Sản Phẩm</h2>
-        <a asp-action="Create" class="btn btn-success">+ Thêm danh mục sản phẩm</a>
+<div class="container mt-5 mb-5" style="max-width: 1200px;">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex align-items-center gap-2">
+            <div style="width: 5px; height: 28px; background-color: #306E51; border-radius: 4px;"></div>
+            <h2 class="mb-0" style="color: #1a1a1a; font-weight: 800; font-size: 24px;">
+                Danh Mục Sản Phẩm
+            </h2>
+        </div>
+        <a asp-action="Create" class="btn text-white px-3 py-2" style="background-color: #FF6600; border-radius: 8px; font-weight: 600; box-shadow: 0 4px 12px rgba(255,102,0,0.2); transition: all 0.3s;">
+            <i class="bi bi-plus-circle me-1"></i> Thêm danh mục
+        </a>
     </div>
 
     @if (TempData["SuccessMessage"] != null)
     {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            @TempData["SuccessMessage"]
+        <div class="alert alert-success alert-dismissible fade show border-0" role="alert" style="background-color: #dcfce7; color: #16a34a; border-radius: 8px;">
+            <strong class="me-2">Thành công!</strong> @TempData["SuccessMessage"]
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     }
 
     @if (TempData["ErrorMessage"] != null)
     {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            @TempData["ErrorMessage"]
+        <div class="alert alert-danger alert-dismissible fade show border-0" role="alert" style="background-color: #fee2e2; color: #dc2626; border-radius: 8px;">
+            <strong class="me-2">Lỗi!</strong> @TempData["ErrorMessage"]
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     }
 
-    <table class="table table-bordered table-striped shadow-sm align-middle">
-        <thead class="table-dark">
-            <tr>
-                <th>ID</th>
-                <th>Hình ảnh</th>
-                <th>Tên danh mục</th>
-                <th>Danh mục cha</th>
-                <th>Mô tả</th>
-                <th>Thao tác</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>@item.Id</td>
-                    <td>
-                        @if (!string.IsNullOrEmpty(item.ImageUrl))
+    <!-- Table Card -->
+    <div class="card border-0" style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.06);">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead style="background-color: #f8faf9;">
+                        <tr>
+                            <th class="py-3 px-4 text-muted" style="font-weight: 600; font-size: 13px; letter-spacing: 0.5px; border-bottom: 2px solid #306E51; width: 60px;">ID</th>
+                            <th class="py-3 text-muted text-center" style="font-weight: 600; font-size: 13px; letter-spacing: 0.5px; border-bottom: 2px solid #306E51; width: 100px;">HÌNH ẢNH</th>
+                            <th class="py-3 text-muted" style="font-weight: 600; font-size: 13px; letter-spacing: 0.5px; border-bottom: 2px solid #306E51;">TÊN DANH MỤC</th>
+                            <th class="py-3 text-muted" style="font-weight: 600; font-size: 13px; letter-spacing: 0.5px; border-bottom: 2px solid #306E51;">DANH MỤC CHA</th>
+                            <th class="py-3 text-muted" style="font-weight: 600; font-size: 13px; letter-spacing: 0.5px; border-bottom: 2px solid #306E51;">MÔ TẢ</th>
+                            <th class="px-4 py-3 text-muted text-end" style="font-weight: 600; font-size: 13px; letter-spacing: 0.5px; border-bottom: 2px solid #306E51; width: 150px;">THAO TÁC</th>
+                        </tr>
+                    </thead>
+                    <tbody style="border-top: none;">
+                        @foreach (var item in Model)
                         {
-                            <img src="@item.ImageUrl" alt="Image" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;" />
+                            <tr style="transition: background-color 0.2s;">
+                                <td class="py-2 px-4">
+                                    <span style="font-weight: 700; color: #306E51; font-size: 14px;">#@item.Id</span>
+                                </td>
+                                <td class="py-2 text-center">
+                                    @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                    {
+                                        <img src="@item.ImageUrl" alt="Image" style="width: 48px; height: 48px; object-fit: cover; border-radius: 6px; border: 1px solid #eee;" />
+                                    }
+                                    else
+                                    {
+                                        <div style="width: 48px; height: 48px; background-color: #f3f4f6; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; color: #9ca3af; border: 1px dashed #d1d5db;">
+                                            <i class="bi bi-image" style="font-size: 20px;"></i>
+                                        </div>
+                                    }
+                                </td>
+                                <td class="py-2">
+                                    <div style="font-weight: 600; color: #1a1a1a; font-size: 14px;">
+                                        @if (item.ParentId != null)
+                                        {
+                                            <span class="text-muted me-2" style="font-weight: 400;">|_</span> @item.Name
+                                        }
+                                        else
+                                        {
+                                            @item.Name
+                                        }
+                                    </div>
+                                </td>
+                                <td class="py-2">
+                                    <span style="font-size: 14px; color: #555;">@(item.ParentCategory != null ? item.ParentCategory.Name : "—")</span>
+                                </td>
+                                <td class="py-2">
+                                    <span style="font-size: 13px; color: #666;">@(string.IsNullOrEmpty(item.Description) ? "—" : item.Description)</span>
+                                </td>
+                                <td class="px-4 py-2 text-end">
+                                    <div class="d-flex justify-content-end align-items-center gap-2">
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-edit-icon" title="Sửa">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <form asp-action="Delete" asp-route-id="@item.Id" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn xóa danh mục này?');" style="margin: 0;">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm" style="background-color: #fff; color: #dc2626; border: 1px solid #fecaca; border-radius: 6px; padding: 4px 8px; transition: all 0.2s;" title="Xóa">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
                         }
-                        else
-                        {
-                            <span class="text-muted">Không có ảnh</span>
-                        }
-                    </td>
-                    <td>
-                        @if (item.ParentId != null)
-                        {
-                            <span class="ms-3 text-muted">|_</span> <strong>@item.Name</strong>
-                        }
-                        else
-                        {
-                            <strong>@item.Name</strong>
-                        }
-                    </td>
-                    <td>
-                        @(item.ParentCategory != null ? item.ParentCategory.Name : "-")
-                    </td>
-                    <td>@(item.Description ?? "Không có mô tả")</td>
-                    <td>
-                        <div class="d-flex gap-2">
-                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Sửa</a>
-                            <form asp-action="Delete" asp-route-id="@item.Id" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn xóa danh mục này?');">
-                                @Html.AntiForgeryToken()
-                                <button type="submit" class="btn btn-sm btn-danger">Xóa</button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+                    </tbody>
+                </table>
+                @if (!Model.Any())
+                {
+                    <div class="text-center py-5 text-muted">Không có dữ liệu danh mục.</div>
+                }
+            </div>
+        </div>
+        @await Html.PartialAsync("_Pagination", new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData))
+    </div>
 </div>

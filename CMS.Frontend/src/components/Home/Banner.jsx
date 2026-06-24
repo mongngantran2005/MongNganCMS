@@ -46,21 +46,37 @@ function Banner({ banners = [] }) {
               opacity: i === current ? 1 : 0,
               transition: 'opacity 0.6s ease',
               pointerEvents: i === current ? 'auto' : 'none',
+              overflow: 'hidden',
+              backgroundColor: '#000'
             }}
           >
-            {banner.targetUrl ? (
-              <a href={banner.targetUrl}>
+            {/* Blurred Background */}
+            <div style={{
+              position: 'absolute', inset: -40,
+              backgroundImage: `url(${getImg(banner.imageUrl)})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              filter: 'blur(20px)',
+              opacity: 0.6,
+              zIndex: 0
+            }} />
+
+            {/* Foreground Image */}
+            <div style={{ position: 'absolute', inset: 0, zIndex: 1 }}>
+              {banner.targetUrl ? (
+                <a href={banner.targetUrl} style={{ display: 'block', width: '100%', height: '100%' }}>
+                  <img src={getImg(banner.imageUrl)} alt={banner.title || `Banner ${i + 1}`}
+                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                    onError={e => { e.target.src = fallback[0].imageUrl; }}
+                  />
+                </a>
+              ) : (
                 <img src={getImg(banner.imageUrl)} alt={banner.title || `Banner ${i + 1}`}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                   onError={e => { e.target.src = fallback[0].imageUrl; }}
                 />
-              </a>
-            ) : (
-              <img src={getImg(banner.imageUrl)} alt={banner.title || `Banner ${i + 1}`}
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                onError={e => { e.target.src = fallback[0].imageUrl; }}
-              />
-            )}
+              )}
+            </div>
           </div>
         ))}
       </div>

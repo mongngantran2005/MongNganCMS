@@ -107,6 +107,17 @@
   position: relative;
 }
 
+.user-dropdown-wrapper::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: -20px;
+  right: -20px;
+  height: 20px;
+  background: transparent;
+  z-index: 998;
+}
+
 .user-dropdown-wrapper:hover .user-dropdown {
   opacity: 1;
   visibility: visible;

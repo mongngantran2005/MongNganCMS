@@ -5,16 +5,18 @@ import FeaturedProducts from '../components/Home/FeaturedProducts';
 import NewProducts from '../components/Home/NewProducts';
 import Promotion from '../components/Home/Promotion';
 import BlogSection from '../components/Home/BlogSection';
-import { getProducts, getCategories } from '../services/productService';
+import { getProducts, getCategories, getHotProducts } from '../services/productService';
 import { getPosts } from '../services/postService';
 import api from '../services/api';
 
 function HomePage() {
   const [products, setProducts] = useState([]);
+  const [hotProducts, setHotProducts] = useState([]);
   const [posts, setPosts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [banners, setBanners] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
+  const [loadingHotProducts, setLoadingHotProducts] = useState(true);
   const [loadingPosts, setLoadingPosts] = useState(true);
 
   useEffect(() => {
@@ -29,10 +31,9 @@ function HomePage() {
       .catch(console.error);
 
     // Products
-    getProducts()
+    getProducts(6)
       .then(data => {
-        const sorted = data.sort((a, b) => b.id - a.id);
-        setProducts(sorted);
+        setProducts(data);
         setLoadingProducts(false);
       })
       .catch(err => {
@@ -40,10 +41,21 @@ function HomePage() {
         setLoadingProducts(false);
       });
 
-    // Posts
-    getPosts()
+    // Hot Products
+    getHotProducts(6)
       .then(data => {
-        setPosts(data.sort((a, b) => b.id - a.id).slice(0, 3));
+        setHotProducts(data);
+        setLoadingHotProducts(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setLoadingHotProducts(false);
+      });
+
+    // Posts
+    getPosts(4)
+      .then(data => {
+        setPosts(data);
         setLoadingPosts(false);
       })
       .catch(err => {
@@ -58,11 +70,12 @@ function HomePage() {
       <div style={{ marginTop: '36px' }}>
         <CategorySection categories={categories} />
       </div>
-      {/* Ẩn theo yêu cầu */}
-      {/* <Promotion /> */}
-      {/* <FeaturedProducts products={products.slice(0, 10)} loading={loadingProducts} /> */}
       
-      <NewProducts products={products.slice(0, 12)} loading={loadingProducts} />
+      <div style={{ marginTop: '36px' }}>
+        <FeaturedProducts products={hotProducts} loading={loadingHotProducts} />
+      </div>
+      
+      <NewProducts products={products} loading={loadingProducts} />
       <BlogSection posts={posts.slice(0, 4)} loading={loadingPosts} />
     </main>
   );

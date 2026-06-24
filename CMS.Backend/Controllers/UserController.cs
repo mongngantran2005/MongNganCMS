@@ -16,9 +16,27 @@ namespace CMS.Backend.Controllers
         }
 
         // GET: /User
-        public IActionResult Index()
+        public IActionResult Index(int page = 1, int pageSize = 10)
         {
-            var users = _context.Users.ToList();
+            var query = _context.Users.OrderBy(u => u.FullName).AsQueryable();
+
+            int totalCount = query.Count();
+            int totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+            var users = query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            ViewData["CurrentPage"] = page;
+            ViewData["TotalPages"] = Math.Max(1, totalPages);
+            ViewData["TotalCount"] = totalCount;
+            ViewData["PageSize"] = pageSize;
+            // For stats (total counts without pagination)
+            ViewBag.TotalUsers = _context.Users.Count();
+            ViewBag.TotalAdmins = _context.Users.Count(u => u.Role == "Admin");
+            ViewBag.TotalEditors = _context.Users.Count(u => u.Role == "Editor");
+
             return View(users);
         }
 
@@ -42,6 +60,10 @@ namespace CMS.Backend.Controllers
 
             if (ModelState.IsValid)
             {
+                if (!string.IsNullOrEmpty(model.PasswordHash))
+                {
+                    model.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.PasswordHash);
+                }
                 _context.Users.Add(model);
                 _context.SaveChanges();
                 return RedirectToAction(nameof(Index));
@@ -76,7 +98,7 @@ namespace CMS.Backend.Controllers
                 // Nếu nhập mật khẩu mới thì đổi, nếu để trống thì giữ mật khẩu cũ
                 if (!string.IsNullOrWhiteSpace(newPassword))
                 {
-                    user.PasswordHash = newPassword;
+                    user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
                 }
 
                 _context.SaveChanges();

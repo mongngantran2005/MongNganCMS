@@ -1,43 +1,71 @@
 @model List<CMS.Data.Entities.Category>
 
-    @{
-    ViewData["Title"] = "Danh sách danh mục";
-    }
+@{
+    ViewData["Title"] = "Danh mục bài viết";
+}
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>Danh sách danh mục sản phẩm</h2>
-        <a asp-action="Create" class="btn btn-primary">Thêm mới Danh mục</a>
+<div class="container mt-5 mb-5" style="max-width: 1200px;">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex align-items-center gap-2">
+            <div style="width: 5px; height: 28px; background-color: #306E51; border-radius: 4px;"></div>
+            <h2 class="mb-0" style="color: #1a1a1a; font-weight: 800; font-size: 24px;">
+                Danh Mục Bài Viết
+            </h2>
+        </div>
+        <a asp-action="Create" class="btn text-white px-3 py-2" style="background-color: #FF6600; border-radius: 8px; font-weight: 600; box-shadow: 0 4px 12px rgba(255,102,0,0.2); transition: all 0.3s;">
+            <i class="bi bi-plus-circle me-1"></i> Thêm danh mục
+        </a>
     </div>
-    <hr />
 
-    <table class="table table-bordered table-striped">
-        <thead class="table-dark">
-            <tr>
-                <th>ID</th>
-                <th>Tên danh mục</th>
-                <th>Mô tả</th>
-                <th width="150">Hành động</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>@item.Id</td>
-                    <td>@item.Name</td>
-                    <td>@item.Description</td>
-                    <td>
-                        <div class="d-flex gap-2">
-                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Sửa</a>
-                            <form asp-action="Delete" asp-route-id="@item.Id" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn xóa danh mục này?');">
-                                <button type="submit" class="btn btn-sm btn-danger">Xóa</button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <!-- Table Card -->
+    <div class="card border-0" style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.06);">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead style="background-color: #f8faf9;">
+                        <tr>
+                            <th class="py-3 px-4 text-muted" style="font-weight: 600; font-size: 13px; letter-spacing: 0.5px; border-bottom: 2px solid #306E51; width: 60px;">ID</th>
+                            <th class="py-3 text-muted" style="font-weight: 600; font-size: 13px; letter-spacing: 0.5px; border-bottom: 2px solid #306E51;">TÊN DANH MỤC</th>
+                            <th class="py-3 text-muted" style="font-weight: 600; font-size: 13px; letter-spacing: 0.5px; border-bottom: 2px solid #306E51;">MÔ TẢ</th>
+                            <th class="px-4 py-3 text-muted text-end" style="font-weight: 600; font-size: 13px; letter-spacing: 0.5px; border-bottom: 2px solid #306E51; width: 150px;">THAO TÁC</th>
+                        </tr>
+                    </thead>
+                    <tbody style="border-top: none;">
+                        @foreach (var item in Model)
+                        {
+                            <tr style="transition: background-color 0.2s;">
+                                <td class="py-2 px-4">
+                                    <span style="font-weight: 700; color: #306E51; font-size: 14px;">#@item.Id</span>
+                                </td>
+                                <td class="py-2">
+                                    <div style="font-weight: 600; color: #1a1a1a; font-size: 14px;">@item.Name</div>
+                                </td>
+                                <td class="py-2">
+                                    <span style="font-size: 13px; color: #666;">@(string.IsNullOrEmpty(item.Description) ? "—" : item.Description)</span>
+                                </td>
+                                <td class="px-4 py-2 text-end">
+                                    <div class="d-flex justify-content-end align-items-center gap-2">
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-edit-icon" title="Sửa">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <form asp-action="Delete" asp-route-id="@item.Id" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn xóa danh mục này?');" style="margin: 0;">
+                                            <button type="submit" class="btn btn-sm" style="background-color: #fff; color: #dc2626; border: 1px solid #fecaca; border-radius: 6px; padding: 4px 8px; transition: all 0.2s;" title="Xóa">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                @if (!Model.Any())
+                {
+                    <div class="text-center py-5 text-muted">Không có dữ liệu danh mục.</div>
+                }
+            </div>
+        </div>
+        @await Html.PartialAsync("_Pagination", new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData))
+    </div>
 </div>
-        

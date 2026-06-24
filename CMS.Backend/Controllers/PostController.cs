@@ -18,7 +18,7 @@ namespace CMS.Backend.Controllers
         }
 
         // GET: /Post
-        public IActionResult Index(int? categoryId)
+        public IActionResult Index(int? categoryId, int page = 1, int pageSize = 12)
         {
             var query = _context.Posts
                 .Include(p => p.Category)
@@ -30,9 +30,20 @@ namespace CMS.Backend.Controllers
                 ViewBag.FilterCategoryId = categoryId.Value;
             }
 
+            query = query.OrderByDescending(p => p.CreatedDate);
+
+            int totalCount = query.Count();
+            int totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
             var posts = query
-                .OrderByDescending(p => p.CreatedDate)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .ToList();
+
+            ViewData["CurrentPage"] = page;
+            ViewData["TotalPages"] = Math.Max(1, totalPages);
+            ViewData["TotalCount"] = totalCount;
+            ViewData["PageSize"] = pageSize;
 
             ViewBag.Categories = _context.Categories.ToList();
             return View(posts);

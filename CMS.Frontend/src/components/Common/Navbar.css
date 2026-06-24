@@ -109,6 +109,16 @@
   position: relative;
 }
 
+.user-dropdown-wrapper::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: -20px;
+  right: -20px;
+  height: 20px;
+  background: transparent;
+}
+
 .user-dropdown {
   display: none;
   position: absolute;

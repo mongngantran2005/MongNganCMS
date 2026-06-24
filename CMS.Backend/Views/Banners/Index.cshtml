@@ -3,66 +3,139 @@
 @{
     ViewData["Title"] = "Quản lý Banner";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    var baseUrl = "http://localhost:5188";
 }
 
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Quản lý Banner</h1>
-    <div class="btn-toolbar mb-2 mb-md-0">
-        <a asp-action="Create" class="btn btn-sm btn-primary">
-            <i class="fas fa-plus"></i> Thêm banner mới
+<div class="container-fluid mt-4 mb-5" style="max-width:1200px;">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex align-items-center gap-2">
+            <div style="width:5px;height:28px;background:#326e51;border-radius:4px;"></div>
+            <h2 class="mb-0" style="color:#1a1a1a;font-weight:800;font-size:24px;">Quản Lý Banner</h2>
+        </div>
+        <a asp-action="Create" class="btn text-white px-4 py-2 d-flex align-items-center gap-2"
+           style="background:#326e51;border-radius:8px;font-weight:600;box-shadow:0 4px 12px rgba(50,110,81,.25);">
+            <i class="fas fa-plus"></i> Thêm Banner Mới
         </a>
     </div>
-</div>
 
-<div class="table-responsive">
-    <table class="table table-striped table-sm align-middle">
-        <thead>
-            <tr>
-                <th>Ảnh</th>
-                <th>Tiêu đề</th>
-                <th>Link (TargetUrl)</th>
-                <th>Thứ tự</th>
-                <th>Trạng thái</th>
-                <th>Ngày tạo</th>
-                <th>Hành động</th>
-            </tr>
-        </thead>
-        <tbody>
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show border-0 mb-3" role="alert"
+             style="background:#dcfce7;color:#16a34a;border-radius:8px;">
+            <strong>Thành công!</strong> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Banner Cards Grid -->
+    @if (!Model.Any())
+    {
+        <div class="card border-0 text-center py-5" style="border-radius:12px;box-shadow:0 4px 24px rgba(0,0,0,.06);">
+            <div class="card-body">
+                <i class="fas fa-image fa-3x text-muted mb-3"></i>
+                <p class="text-muted">Chưa có banner nào. Hãy thêm banner đầu tiên!</p>
+                <a asp-action="Create" class="btn btn-sm text-white px-4" style="background:#326e51;border-radius:8px;">
+                    <i class="fas fa-plus me-1"></i> Thêm ngay
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row g-3">
             @foreach (var item in Model)
             {
-                <tr>
-                    <td>
-                        <img src="@item.ImageUrl" alt="@item.Title" style="max-height: 50px; border-radius: 4px; border: 1px solid #ddd;" />
-                    </td>
-                    <td>@item.Title</td>
-                    <td>
-                        @if (!string.IsNullOrEmpty(item.TargetUrl))
-                        {
-                            <a href="@item.TargetUrl" target="_blank" title="@item.TargetUrl">Mở link</a>
-                        }
-                    </td>
-                    <td>@item.DisplayOrder</td>
-                    <td>
-                        @if (item.IsActive)
-                        {
-                            <span class="badge bg-success">Hiển thị</span>
-                        }
-                        else
-                        {
-                            <span class="badge bg-secondary">Đã ẩn</span>
-                        }
-                    </td>
-                    <td>@item.CreatedAt.ToString("dd/MM/yyyy")</td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary" title="Sửa">
-                            Sửa
-                        </a>
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger" title="Xóa">
-                            Xóa
-                        </a>
-                    </td>
-                </tr>
+                var imgSrc = string.IsNullOrEmpty(item.ImageUrl) ? "" :
+                             item.ImageUrl.StartsWith("http") ? item.ImageUrl : baseUrl + item.ImageUrl;
+
+                <div class="col-12">
+                    <div class="card border-0" style="border-radius:12px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.06);transition:box-shadow .2s;"
+                         onmouseover="this.style.boxShadow='0 8px 32px rgba(0,0,0,.12)'"
+                         onmouseout="this.style.boxShadow='0 4px 16px rgba(0,0,0,.06)'">
+                        <div class="row g-0 align-items-center">
+                            <!-- Thumbnail -->
+                            <div class="col-md-4" style="max-height:160px;overflow:hidden;background:#f5f5f5;">
+                                @if (!string.IsNullOrEmpty(imgSrc))
+                                {
+                                    <img src="@imgSrc" alt="@item.Title"
+                                         style="width:100%;height:160px;object-fit:cover;" />
+                                }
+                                else
+                                {
+                                    <div class="d-flex align-items-center justify-content-center" style="height:160px;color:#ccc;">
+                                        <i class="fas fa-image fa-3x"></i>
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Info -->
+                            <div class="col-md-8">
+                                <div class="card-body d-flex justify-content-between align-items-center flex-wrap gap-3 p-4">
+                                    <div>
+                                        <h5 class="mb-1 fw-bold" style="color:#1a1a1a;">
+                                            @(string.IsNullOrEmpty(item.Title) ? "(Không có tiêu đề)" : item.Title)
+                                        </h5>
+                                        <div class="d-flex align-items-center gap-3 mt-2 flex-wrap">
+                                            <span class="badge" style="background:@(item.IsActive ? "#dcfce7" : "#f3f4f6");color:@(item.IsActive ? "#16a34a" : "#6b7280");border:1px solid @(item.IsActive ? "#bbf7d0" : "#e5e7eb");font-size:12px;padding:5px 10px;border-radius:20px;font-weight:600;">
+                                                @(item.IsActive ? "● Đang hiển thị" : "● Đã ẩn")
+                                            </span>
+                                            <span class="text-muted" style="font-size:13px;">
+                                                <i class="fas fa-sort-numeric-up me-1"></i>Thứ tự: @item.DisplayOrder
+                                            </span>
+                                            <span class="text-muted" style="font-size:13px;">
+                                                <i class="fas fa-calendar me-1"></i>@item.CreatedAt.ToString("dd/MM/yyyy")
+                                            </span>
+                                            @if (!string.IsNullOrEmpty(item.TargetUrl))
+                                            {
+                                                <a href="@item.TargetUrl" target="_blank" class="text-decoration-none" style="font-size:13px;color:#326e51;">
+                                                    <i class="fas fa-link me-1"></i>Xem link
+                                                </a>
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <!-- Actions -->
+                                    <div class="d-flex gap-2 align-items-center">
+                                        <!-- Toggle Active -->
+                                        <form asp-action="ToggleActive" asp-route-id="@item.Id" method="post" style="margin:0;">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm"
+                                                    style="background:@(item.IsActive ? "#fef3c7" : "#dcfce7");color:@(item.IsActive ? "#d97706" : "#16a34a");border:1px solid @(item.IsActive ? "#fde68a" : "#bbf7d0");border-radius:8px;font-weight:600;padding:6px 14px;"
+                                                    title="@(item.IsActive ? "Ẩn banner" : "Hiện banner")">
+                                                @if (item.IsActive)
+                                                {
+                                                    <i class="fas fa-eye-slash me-1"></i><text>Ẩn</text>
+                                                }
+                                                else
+                                                {
+                                                    <i class="fas fa-eye me-1"></i><text>Hiện</text>
+                                                }
+                                            </button>
+                                        </form>
+
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm"
+                                           style="background:#fff;color:#326e51;border:1px solid #326e51;border-radius:8px;font-weight:600;padding:6px 14px;"
+                                           onmouseover="this.style.background='#f0faf5'" onmouseout="this.style.background='#fff'">
+                                            <i class="fas fa-edit me-1"></i>Sửa
+                                        </a>
+
+                                        <form asp-action="Delete" asp-route-id="@item.Id" method="post"
+                                              onsubmit="return confirm('Xác nhận xóa banner này?')" style="margin:0;">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm"
+                                                    style="background:#fff;color:#dc2626;border:1px solid #fecaca;border-radius:8px;font-weight:600;padding:6px 14px;"
+                                                    onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='#fff'">
+                                                <i class="fas fa-trash me-1"></i>Xóa
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             }
-        </tbody>
-    </table>
+        </div>
+    }
 </div>

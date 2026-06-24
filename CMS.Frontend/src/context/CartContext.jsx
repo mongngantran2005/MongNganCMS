@@ -2,10 +2,17 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const CartContext = createContext(null);
 
+const getCartKey = () => {
+  try {
+    const info = JSON.parse(localStorage.getItem('customerInfo'));
+    return info?.id ? `cart_${info.id}` : 'cart';
+  } catch { return 'cart'; }
+};
+
 export function CartProvider({ children }) {
   const [cart, setCart] = useState(() => {
     try {
-      return JSON.parse(localStorage.getItem('cart')) || [];
+      return JSON.parse(localStorage.getItem(getCartKey())) || [];
     } catch {
       return [];
     }
@@ -13,7 +20,7 @@ export function CartProvider({ children }) {
 
   const saveCart = (newCart) => {
     setCart(newCart);
-    localStorage.setItem('cart', JSON.stringify(newCart));
+    localStorage.setItem(getCartKey(), JSON.stringify(newCart));
     window.dispatchEvent(new Event('storage'));
   };
 
@@ -45,11 +52,11 @@ export function CartProvider({ children }) {
 
   const clearCart = () => saveCart([]);
 
-  // Sync tab khác
+  // Sync tab khác hoặc khi thay đổi tài khoản
   useEffect(() => {
     const handler = () => {
       try {
-        setCart(JSON.parse(localStorage.getItem('cart')) || []);
+        setCart(JSON.parse(localStorage.getItem(getCartKey())) || []);
       } catch {}
     };
     window.addEventListener('storage', handler);

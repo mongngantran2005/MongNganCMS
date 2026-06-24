@@ -30,6 +30,9 @@ namespace CMS.Data.Entities
         [Required]
         public string Password { get; set; }
 
+        public string? ResetPasswordToken { get; set; }
+        public DateTime? ResetPasswordTokenExpiry { get; set; }
+
         public virtual ICollection<Order>? Orders { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 using CMS.Data;
 using CMS.Data.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace CMS.Backend.Controllers
 {
+    [Authorize]
     public class BannersController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -25,8 +27,6 @@ namespace CMS.Backend.Controllers
         // GET: Banners
         public async Task<IActionResult> Index()
         {
-            if (HttpContext.Session.GetString("UserId") == null) return RedirectToAction("Login", "Account");
-            
             var banners = await _context.Banners.OrderBy(b => b.DisplayOrder).ToListAsync();
             return View(banners);
         }
@@ -34,7 +34,6 @@ namespace CMS.Backend.Controllers
         // GET: Banners/Create
         public IActionResult Create()
         {
-            if (HttpContext.Session.GetString("UserId") == null) return RedirectToAction("Login", "Account");
             return View();
         }
 
@@ -43,8 +42,6 @@ namespace CMS.Backend.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Banner banner, IFormFile imageFile)
         {
-            if (HttpContext.Session.GetString("UserId") == null) return RedirectToAction("Login", "Account");
-
             if (imageFile != null && imageFile.Length > 0)
             {
                 var uploadsFolder = Path.Combine(_env.WebRootPath, "images", "banners");
@@ -69,11 +66,14 @@ namespace CMS.Backend.Controllers
                 return View(banner);
             }
 
+            ModelState.Remove("ImageUrl"); // Remove validation error for ImageUrl since we manually set it
+
             if (ModelState.IsValid)
             {
                 banner.CreatedAt = DateTime.Now;
                 _context.Add(banner);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = $"Đã thêm banner \"{banner.Title}\" thành công.";
                 return RedirectToAction(nameof(Index));
             }
             return View(banner);
@@ -82,7 +82,6 @@ namespace CMS.Backend.Controllers
         // GET: Banners/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (HttpContext.Session.GetString("UserId") == null) return RedirectToAction("Login", "Account");
             if (id == null) return NotFound();
 
             var banner = await _context.Banners.FindAsync(id);
@@ -96,10 +95,9 @@ namespace CMS.Backend.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Banner banner, IFormFile? imageFile)
         {
-            if (HttpContext.Session.GetString("UserId") == null) return RedirectToAction("Login", "Account");
             if (id != banner.Id) return NotFound();
 
-            ModelState.Remove("ImageUrl"); // Bỏ qua validate ảnh khi edit vì có thể ko chọn mới
+            ModelState.Remove("ImageUrl");
 
             if (ModelState.IsValid)
             {
@@ -131,6 +129,7 @@ namespace CMS.Backend.Controllers
                     banner.CreatedAt = existingBanner.CreatedAt;
                     _context.Update(banner);
                     await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = $"Đã cập nhật banner \"{banner.Title}\" thành công.";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -142,33 +141,34 @@ namespace CMS.Backend.Controllers
             return View(banner);
         }
 
-        // GET: Banners/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (HttpContext.Session.GetString("UserId") == null) return RedirectToAction("Login", "Account");
-            if (id == null) return NotFound();
-
-            var banner = await _context.Banners.FirstOrDefaultAsync(m => m.Id == id);
-            if (banner == null) return NotFound();
-
-            return View(banner);
-        }
-
         // POST: Banners/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (HttpContext.Session.GetString("UserId") == null) return RedirectToAction("Login", "Account");
-
             var banner = await _context.Banners.FindAsync(id);
             if (banner != null)
             {
-                // Tùy chọn: Xóa file ảnh vật lý nếu muốn
-                // if (!string.IsNullOrEmpty(banner.ImageUrl)) ...
                 _context.Banners.Remove(banner);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = $"Đã xóa banner thành công.";
             }
+            return RedirectToAction(nameof(Index));
+        }
+
+        // POST: Banners/ToggleActive/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ToggleActive(int id)
+        {
+            var banner = await _context.Banners.FindAsync(id);
+            if (banner == null) return NotFound();
+
+            banner.IsActive = !banner.IsActive;
+            _context.Update(banner);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = $"Đã {(banner.IsActive ? "kích hoạt" : "ẩn")} banner \"{banner.Title}\".";
             return RedirectToAction(nameof(Index));
         }
 

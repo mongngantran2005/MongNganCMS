@@ -2,9 +2,9 @@
 
 @{
     ViewData["Title"] = "Quản lý Thành viên";
-    var totalUsers = Model.Count();
-    var admins = Model.Count(u => u.Role == "Admin");
-    var editors = Model.Count(u => u.Role == "Editor");
+    var totalUsers = ViewBag.TotalUsers ?? 0;
+    var admins = ViewBag.TotalAdmins ?? 0;
+    var editors = ViewBag.TotalEditors ?? 0;
 }
 
 <style>
@@ -103,4 +103,5 @@
             </tbody>
         </table>
     </div>
+    @await Html.PartialAsync("_Pagination", new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData))
 </div>

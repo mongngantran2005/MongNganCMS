@@ -23,7 +23,7 @@ namespace CMS.Backend.Controllers
         /// <returns>Danh sách sản phẩm</returns>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult GetAll([FromQuery] string? search = null, [FromQuery] int? categoryId = null)
+        public IActionResult GetAll([FromQuery] string? search = null, [FromQuery] int? categoryId = null, [FromQuery] int? limit = null)
         {
             var query = _context.Products.AsQueryable();
 
@@ -42,8 +42,14 @@ namespace CMS.Backend.Controllers
                 query = query.Where(p => p.Name.Contains(search));
             }
 
+            query = query.OrderByDescending(p => p.Id);
+
+            if (limit.HasValue && limit.Value > 0)
+            {
+                query = query.Take(limit.Value);
+            }
+
             var products = query
-                .OrderByDescending(p => p.Id)
                 .Select(p => new {
                     p.Id,
                     p.Name,
@@ -102,6 +108,29 @@ namespace CMS.Backend.Controllers
                 CategoryId = product.CategoryProductId,
                 CategoryName = product.CategoryProduct != null ? product.CategoryProduct.Name : "Chưa phân loại"
             });
+        }
+
+        [HttpGet("hot")]
+        public IActionResult GetHotProducts([FromQuery] int limit = 3)
+        {
+            var hotProducts = _context.Products
+                .Select(p => new {
+                    Product = p,
+                    SoldCount = _context.OrderDetails.Where(od => od.ProductId == p.Id).Sum(od => (int?)od.Quantity) ?? 0
+                })
+                .OrderByDescending(x => x.SoldCount)
+                .Take(limit)
+                .Select(x => new {
+                    x.Product.Id,
+                    x.Product.Name,
+                    x.Product.Price,
+                    x.Product.ImageUrl,
+                    x.Product.StockQuantity,
+                    CategoryName = x.Product.CategoryProduct != null ? x.Product.CategoryProduct.Name : "Chưa phân loại"
+                })
+                .ToList();
+
+            return Ok(hotProducts);
         }
     }
 }

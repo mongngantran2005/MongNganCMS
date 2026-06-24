@@ -123,6 +123,11 @@ else
                     </div>
                 </div>
             </div>
-        }
+        }\r
     </div>
 }
+
+<!-- Pagination -->
+<div class="card border-0 mt-3" style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.06);">
+    @await Html.PartialAsync("_Pagination", new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData))
+</div>

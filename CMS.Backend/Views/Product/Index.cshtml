@@ -4,85 +4,119 @@
     ViewData["Title"] = "Sản phẩm";
 }
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="mb-0">🛒 Danh Sách Sản Phẩm</h2>
-        <a asp-action="Create" class="btn btn-success">+ Thêm sản phẩm</a>
+<div class="container mt-5 mb-5" style="max-width: 1200px;">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex align-items-center gap-2">
+            <div style="width: 5px; height: 28px; background-color: #306E51; border-radius: 4px;"></div>
+            <h2 class="mb-0" style="color: #1a1a1a; font-weight: 800; font-size: 24px;">
+                Sản Phẩm
+            </h2>
+        </div>
+        <a asp-action="Create" class="btn text-white px-3 py-2" style="background-color: #FF6600; border-radius: 8px; font-weight: 600; box-shadow: 0 4px 12px rgba(255,102,0,0.2); transition: all 0.3s;">
+            <i class="bi bi-plus-circle me-1"></i> Thêm sản phẩm
+        </a>
     </div>
 
     @if (TempData["SuccessMessage"] != null)
     {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            @TempData["SuccessMessage"]
+        <div class="alert alert-success alert-dismissible fade show border-0" role="alert" style="background-color: #dcfce7; color: #16a34a; border-radius: 8px;">
+            <strong class="me-2">Thành công!</strong> @TempData["SuccessMessage"]
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     }
 
     @if (TempData["ErrorMessage"] != null)
     {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            @TempData["ErrorMessage"]
+        <div class="alert alert-danger alert-dismissible fade show border-0" role="alert" style="background-color: #fee2e2; color: #dc2626; border-radius: 8px;">
+            <strong class="me-2">Lỗi!</strong> @TempData["ErrorMessage"]
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     }
 
-    <table class="table table-bordered table-striped shadow-sm align-middle">
-        <thead class="table-dark">
-            <tr>
-                <th>ID</th>
-                <th>Ảnh</th>
-                <th>Tên sản phẩm</th>
-                <th>Danh mục</th>
-                <th>Giá</th>
-                <th>Tồn kho</th>
-                <th>Thao tác</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>@item.Id</td>
-                    <td>
-                        @if (!string.IsNullOrEmpty(item.ImageUrl))
+    <!-- Table Card -->
+    <div class="card border-0" style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.06);">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead style="background-color: #f8faf9;">
+                        <tr>
+                            <th class="py-3 px-4 text-muted" style="font-weight: 600; font-size: 13px; letter-spacing: 0.5px; border-bottom: 2px solid #306E51; width: 60px;">ID</th>
+                            <th class="py-3 text-muted text-center" style="font-weight: 600; font-size: 13px; letter-spacing: 0.5px; border-bottom: 2px solid #306E51; width: 80px;">ẢNH</th>
+                            <th class="py-3 text-muted" style="font-weight: 600; font-size: 13px; letter-spacing: 0.5px; border-bottom: 2px solid #306E51;">TÊN SẢN PHẨM</th>
+                            <th class="py-3 text-muted" style="font-weight: 600; font-size: 13px; letter-spacing: 0.5px; border-bottom: 2px solid #306E51;">DANH MỤC</th>
+                            <th class="py-3 text-muted text-end" style="font-weight: 600; font-size: 13px; letter-spacing: 0.5px; border-bottom: 2px solid #306E51;">GIÁ</th>
+                            <th class="py-3 text-muted text-center" style="font-weight: 600; font-size: 13px; letter-spacing: 0.5px; border-bottom: 2px solid #306E51;">TỒN KHO</th>
+                            <th class="px-4 py-3 text-muted text-end" style="font-weight: 600; font-size: 13px; letter-spacing: 0.5px; border-bottom: 2px solid #306E51; width: 150px;">THAO TÁC</th>
+                        </tr>
+                    </thead>
+                    <tbody style="border-top: none;">
+                        @foreach (var item in Model)
                         {
-                            <img src="@item.ImageUrl" alt="@item.Name" style="width:60px;height:60px;object-fit:cover;" />
+                            <tr style="transition: background-color 0.2s;">
+                                <td class="py-2 px-4">
+                                    <span style="font-weight: 700; color: #306E51; font-size: 14px;">#@item.Id</span>
+                                </td>
+                                <td class="py-2 text-center">
+                                    @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                    {
+                                        <img src="@item.ImageUrl" alt="@item.Name" style="width: 48px; height: 48px; object-fit: cover; border-radius: 6px; border: 1px solid #eee;" />
+                                    }
+                                    else
+                                    {
+                                        <div style="width: 48px; height: 48px; background-color: #f3f4f6; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; color: #9ca3af; border: 1px dashed #d1d5db;">
+                                            <i class="bi bi-image" style="font-size: 20px;"></i>
+                                        </div>
+                                    }
+                                </td>
+                                <td class="py-2">
+                                    <div style="font-weight: 600; color: #1a1a1a; font-size: 14px;">@item.Name</div>
+                                </td>
+                                <td class="py-2">
+                                    <span style="font-size: 13px; color: #555; background-color: #f1f5f9; padding: 4px 8px; border-radius: 4px; border: 1px solid #e2e8f0;">
+                                        @(item.CategoryProduct?.Name ?? "Chưa phân loại")
+                                    </span>
+                                </td>
+                                <td class="py-2 text-end">
+                                    <div style="font-weight: 700; color: #FF6600; font-size: 14px;">@item.Price.ToString("N0") ₫</div>
+                                </td>
+                                <td class="py-2 text-center">
+                                    @if (item.StockQuantity <= 0)
+                                    {
+                                        <span style="background-color: #fee2e2; color: #dc2626; border: 1px solid #fecaca; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-block;">Hết hàng</span>
+                                    }
+                                    else if (item.StockQuantity < 10)
+                                    {
+                                        <span style="background-color: #fef3c7; color: #d97706; border: 1px solid #fde68a; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-block;">Sắp hết (@item.StockQuantity)</span>
+                                    }
+                                    else
+                                    {
+                                        <span style="background-color: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-block;">Còn hàng (@item.StockQuantity)</span>
+                                    }
+                                </td>
+                                <td class="px-4 py-2 text-end">
+                                    <div class="d-flex justify-content-end align-items-center gap-2">
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-edit-icon" title="Sửa">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <form asp-action="Delete" asp-route-id="@item.Id" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?');" style="margin: 0;">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm" style="background-color: #fff; color: #dc2626; border: 1px solid #fecaca; border-radius: 6px; padding: 4px 8px; transition: all 0.2s;" title="Xóa">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
                         }
-                        else
-                        {
-                            <span class="text-muted">Không có ảnh</span>
-                        }
-                    </td>
-                    <td><strong>@item.Name</strong></td>
-                    <td>
-                        <span class="badge bg-secondary">@(item.CategoryProduct?.Name ?? "Chưa phân loại")</span>
-                    </td>
-                    <td class="text-danger fw-bold">@item.Price.ToString("N0") đ</td>
-                    <td>
-                        @if (item.StockQuantity <= 0)
-                        {
-                            <span class="badge bg-danger">Hết hàng</span>
-                        }
-                        else if (item.StockQuantity < 10)
-                        {
-                            <span class="badge bg-warning text-dark">Sắp hết (@item.StockQuantity)</span>
-                        }
-                        else
-                        {
-                            <span class="badge bg-success">Còn hàng (@item.StockQuantity)</span>
-                        }
-                    </td>
-                    <td>
-                        <div class="d-flex gap-2">
-                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Sửa</a>
-                            <form asp-action="Delete" asp-route-id="@item.Id" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?');">
-                                @Html.AntiForgeryToken()
-                                <button type="submit" class="btn btn-sm btn-danger">Xóa</button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+                    </tbody>
+                </table>
+                @if (!Model.Any())
+                {
+                    <div class="text-center py-5 text-muted">Không có dữ liệu sản phẩm.</div>
+                }
+            </div>
+        </div>
+        @await Html.PartialAsync("_Pagination", new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData))
+    </div>
 </div>

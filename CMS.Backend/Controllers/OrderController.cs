@@ -104,5 +104,20 @@ namespace CMS.Backend.Controllers
             TempData["SuccessMessage"] = $"Đã xóa đơn hàng #{order.Id}.";
             return RedirectToAction(nameof(Index));
         }
+
+        // POST: /Order/UpdateStatus/5
+        [HttpPost]
+        public IActionResult UpdateStatus(int id, int status)
+        {
+            var order = _context.Orders.Find(id);
+            if (order == null) return NotFound();
+
+            order.Status = status;
+            _context.Orders.Update(order);
+            _context.SaveChanges();
+            
+            TempData["SuccessMessage"] = $"Đã cập nhật trạng thái đơn hàng #{order.Id}.";
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

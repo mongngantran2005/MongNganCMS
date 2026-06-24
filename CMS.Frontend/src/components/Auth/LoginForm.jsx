@@ -24,7 +24,7 @@ function LoginForm() {
     }
     setLoading(true);
     try {
-      const data = await login(form);
+      const data = await login({ email: form.username, password: form.password });
       localStorage.setItem('customerInfo', JSON.stringify(data));
       window.dispatchEvent(new Event('storage'));
       navigate('/');
@@ -60,9 +60,14 @@ function LoginForm() {
       </div>
 
       <div>
-        <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#555', marginBottom: '6px' }}>
-          Mật khẩu
-        </label>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+          <label style={{ fontSize: '13px', fontWeight: '600', color: '#555', margin: 0 }}>
+            Mật khẩu
+          </label>
+          <a href="/forgot-password" style={{ fontSize: '13px', color: 'var(--primary, #326e51)', textDecoration: 'none', fontWeight: '600' }}>
+            Quên mật khẩu?
+          </a>
+        </div>
         <input
           id="login-password"
           name="password"

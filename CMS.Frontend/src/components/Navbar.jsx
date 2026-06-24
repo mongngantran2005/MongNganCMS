@@ -11,8 +11,15 @@ function Navbar() {
   const [cartCount, setCartCount] = useState(0);
   const [searchText, setSearchText] = useState('');
 
+  const getCartKey = () => {
+    try {
+      const info = JSON.parse(localStorage.getItem('customerInfo'));
+      return info?.id ? `cart_${info.id}` : 'cart';
+    } catch { return 'cart'; }
+  };
+
   const refreshCart = () => {
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const cart = JSON.parse(localStorage.getItem(getCartKey())) || [];
     setCartCount(cart.reduce((t, i) => t + i.quantity, 0));
   };
 

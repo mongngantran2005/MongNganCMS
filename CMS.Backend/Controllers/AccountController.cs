@@ -32,10 +32,24 @@ namespace CMS.Backend.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(string username, string password)
         {
-            // 1. Kiểm tra tài khoản trong Database (lưu mật khẩu dạng text thô theo yêu cầu)
-            var user = _context.Users.FirstOrDefault(u => u.Username == username && u.PasswordHash == password);
+            // 1. Kiểm tra tài khoản trong Database
+            var user = _context.Users.FirstOrDefault(u => u.Username == username);
 
+            bool isPasswordValid = false;
             if (user != null)
+            {
+                try
+                {
+                    isPasswordValid = BCrypt.Net.BCrypt.Verify(password, user.PasswordHash);
+                }
+                catch
+                {
+                    // Fallback cho mật khẩu cũ chưa mã hóa
+                    isPasswordValid = (user.PasswordHash == password);
+                }
+            }
+
+            if (isPasswordValid)
             {
                 // 2. Thiết lập danh tính (Claims)
                 var claims = new List<Claim>
@@ -109,7 +123,7 @@ namespace CMS.Backend.Controllers
             {
                 Username = username,
                 FullName = fullName,
-                PasswordHash = password,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
                 Role = "Editor"
             };
 
