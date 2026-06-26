@@ -83,7 +83,7 @@ function Navbar() {
                 <div className="action-item user-dropdown-wrapper">
                   <div style={{ width: '28px', height: '28px', borderRadius: '50%', overflow: 'hidden', backgroundColor: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                     {customerInfo.avatarUrl ? (
-                      <img src={customerInfo.avatarUrl.startsWith('http') ? customerInfo.avatarUrl : `http://localhost:5188${customerInfo.avatarUrl}`} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <img src={customerInfo.avatarUrl.startsWith('http') ? customerInfo.avatarUrl : `${import.meta.env.VITE_API_URL}${customerInfo.avatarUrl}`} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     ) : (
                       <User size={18} />
                     )}
@@ -95,7 +95,7 @@ function Navbar() {
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                         <div style={{ width: '40px', height: '40px', borderRadius: '50%', overflow: 'hidden', backgroundColor: '#e0e0e0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                           {customerInfo.avatarUrl
-                            ? <img src={customerInfo.avatarUrl.startsWith('http') ? customerInfo.avatarUrl : `http://localhost:5188${customerInfo.avatarUrl}`} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            ? <img src={customerInfo.avatarUrl.startsWith('http') ? customerInfo.avatarUrl : `${import.meta.env.VITE_API_URL}${customerInfo.avatarUrl}`} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                             : <User size={22} color="#999" />}
                         </div>
                         <div>

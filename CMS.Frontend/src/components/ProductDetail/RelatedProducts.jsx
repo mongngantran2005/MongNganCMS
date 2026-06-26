@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getProducts } from '../../services/productService';
 
-const BACKEND_URL = 'http://localhost:5188';
+const BACKEND_URL = import.meta.env.VITE_API_URL;
 function getImg(url) {
   if (!url) return 'https://placehold.co/200x200/f5f5f5/999?text=SP';
   return url.startsWith('http') ? url : `${BACKEND_URL}${url}`;

@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Heart, X } from 'lucide-react';
 
-const BACKEND_URL = 'http://localhost:5188';
+const BACKEND_URL = import.meta.env.VITE_API_URL;
 function getImg(url) {
   if (!url) return 'https://via.placeholder.com/90';
   return url.startsWith('http') ? url : `${BACKEND_URL}${url}`;

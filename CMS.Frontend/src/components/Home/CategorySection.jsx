@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-const BACKEND_URL = import.meta.env.VITE_IMAGE_BASE_URL || 'http://localhost:5188';
+const BACKEND_URL = import.meta.env.VITE_IMAGE_BASE_URL || import.meta.env.VITE_API_URL;
 
 // Use lighter pastel colors for the cards
 const BG_COLORS = ['#f3f4f6', '#fef9c3', '#e0e7ff', '#cffafe', '#fee2e2', '#dcfce7', '#ffe4e6', '#f1f5f9'];

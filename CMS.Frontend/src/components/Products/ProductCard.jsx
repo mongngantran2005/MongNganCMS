@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const BACKEND_URL = 'http://localhost:5188';
+const BACKEND_URL = import.meta.env.VITE_API_URL;
 
 function getImg(url, fallback = 'https://via.placeholder.com/400') {
   if (!url) return fallback;

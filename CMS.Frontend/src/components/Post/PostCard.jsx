@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Clock } from 'lucide-react';
 
-const BACKEND_URL = 'http://localhost:5188';
+const BACKEND_URL = import.meta.env.VITE_API_URL;
 const FALLBACK_IMG = 'https://images.unsplash.com/photo-1526947425960-945c6e72858f?auto=format&fit=crop&q=80&w=400';
 
 function getImg(url) {

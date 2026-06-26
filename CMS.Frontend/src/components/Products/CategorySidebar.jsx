@@ -4,7 +4,7 @@ import React from 'react';
  * CategorySidebar - Sidebar danh mục sản phẩm có thể thu gọn
  */
 function CategorySidebar({ categories, selectedCategory, onSelect }) {
-  const BACKEND_URL = 'http://localhost:5188';
+  const BACKEND_URL = import.meta.env.VITE_API_URL;
   const getImg = (url) => (!url ? null : url.startsWith('http') ? url : `${BACKEND_URL}${url}`);
 
   return (

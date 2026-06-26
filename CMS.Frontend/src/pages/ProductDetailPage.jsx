@@ -5,7 +5,7 @@ import RelatedProducts from '../components/ProductDetail/RelatedProducts';
 import { getProductById } from '../services/productService';
 import { useCart } from '../hooks/useCart';
 
-const BACKEND_URL = 'http://localhost:5188';
+const BACKEND_URL = import.meta.env.VITE_API_URL;
 const getImg = (url) => {
   if (!url) return 'https://placehold.co/500x500/f5f5f5/999?text=No+Image';
   return url.startsWith('http') ? url : `${BACKEND_URL}${url}`;

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, ZoomIn } from 'lucide-react';
 
-const BACKEND_URL = 'http://localhost:5188';
+const BACKEND_URL = import.meta.env.VITE_API_URL;
 function getImg(url, fallback = 'https://via.placeholder.com/500') {
   if (!url) return fallback;
   return url.startsWith('http') ? url : `${BACKEND_URL}${url}`;

@@ -120,7 +120,7 @@ function ProfilePage() {
   const handleCancelOrder = async (orderId) => {
     if (!window.confirm("Bạn có chắc chắn muốn hủy đơn hàng này không?")) return;
     try {
-      const response = await fetch(`http://localhost:5188/api/orders/${orderId}/cancel`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/orders/${orderId}/cancel`, {
         method: 'PUT'
       });
       if (response.ok) {
@@ -153,7 +153,7 @@ function ProfilePage() {
                 {avatarPreview ? (
                   <img src={avatarPreview} alt="Avatar Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : profile.avatarUrl ? (
-                  <img src={profile.avatarUrl.startsWith('http') ? profile.avatarUrl : `http://localhost:5188${profile.avatarUrl}`} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img src={profile.avatarUrl.startsWith('http') ? profile.avatarUrl : `${import.meta.env.VITE_API_URL}${profile.avatarUrl}`} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : (
                   <User size={36} color="#999" />
                 )}
@@ -269,7 +269,7 @@ function ProfilePage() {
                     {avatarPreview ? (
                       <img src={avatarPreview} alt="Avatar Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     ) : profile.avatarUrl ? (
-                      <img src={profile.avatarUrl.startsWith('http') ? profile.avatarUrl : `http://localhost:5188${profile.avatarUrl}`} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <img src={profile.avatarUrl.startsWith('http') ? profile.avatarUrl : `${import.meta.env.VITE_API_URL}${profile.avatarUrl}`} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     ) : (
                       <User size={48} color="#CCCCCC" />
                     )}
@@ -404,7 +404,7 @@ function ProfilePage() {
                             return (
                               <div key={item.productId} style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}>
                                 <div style={{ width: '80px', height: '80px', border: '1px solid #CCCCCC', borderRadius: '6px', overflow: 'hidden' }}>
-                                  <img src={item.imageUrl ? (item.imageUrl.startsWith('http') ? item.imageUrl : `http://localhost:5188${item.imageUrl}`) : 'https://placehold.co/80'} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                                  <img src={item.imageUrl ? (item.imageUrl.startsWith('http') ? item.imageUrl : `${import.meta.env.VITE_API_URL}${item.imageUrl}`) : 'https://placehold.co/80'} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                                 </div>
                                 <div style={{ flex: 1 }}>
                                   <div style={{ fontSize: '14px', color: '#09090B', lineHeight: '20px', marginBottom: '4px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>

@@ -1,6 +1,6 @@
 import React from 'react';
 
-const BACKEND_URL = 'http://localhost:5188';
+const BACKEND_URL = import.meta.env.VITE_API_URL;
 function getImg(url) {
   if (!url) return 'https://via.placeholder.com/80';
   return url.startsWith('http') ? url : `${BACKEND_URL}${url}`;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 
-const BACKEND_URL = import.meta.env.VITE_IMAGE_BASE_URL || 'http://localhost:5188';
+const BACKEND_URL = import.meta.env.VITE_IMAGE_BASE_URL || import.meta.env.VITE_API_URL;
 
 function OrderDetailPage() {
   const { id } = useParams();
@@ -89,7 +89,7 @@ function OrderDetailPage() {
             {order.items?.map(item => (
               <div key={item.productId} style={{ display: 'flex', gap: '16px', marginBottom: '16px', paddingBottom: '16px', borderBottom: '1px solid #F9F9F9' }}>
                 <div style={{ width: '80px', height: '80px', border: '1px solid #CCCCCC', borderRadius: '6px', overflow: 'hidden' }}>
-                  <img src={item.imageUrl ? (item.imageUrl.startsWith('http') ? item.imageUrl : `http://localhost:5188${item.imageUrl}`) : 'https://placehold.co/80'} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                  <img src={item.imageUrl ? (item.imageUrl.startsWith('http') ? item.imageUrl : `${import.meta.env.VITE_API_URL}${item.imageUrl}`) : 'https://placehold.co/80'} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 </div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: '14px', color: '#09090B', lineHeight: '20px', marginBottom: '4px' }}>
