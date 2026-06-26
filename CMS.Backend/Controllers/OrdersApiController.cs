@@ -4,6 +4,8 @@ using CMS.Data.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 namespace CMS.Backend.Controllers
 {
     [Route("api/orders")]
@@ -149,13 +151,18 @@ namespace CMS.Backend.Controllers
                     o.Phone,
                     o.ShippingAddress,
                     o.PaymentMethod,
-                    TotalAmount = _context.OrderDetails.Where(od => od.OrderId == o.Id).Sum(od => od.Quantity * od.UnitPrice),
+                    TotalAmount = _context.OrderDetails
+                        .Where(od => od.OrderId == o.Id && od.Status == 0)
+                        .Sum(od => od.Quantity * od.UnitPrice),
                     Items = _context.OrderDetails
                         .Where(od => od.OrderId == o.Id)
                         .Select(od => new {
+                            OrderDetailId = od.Id,
                             od.ProductId,
                             od.Quantity,
                             od.UnitPrice,
+                            od.Status,
+                            od.CancelReason,
                             ProductName = _context.Products.FirstOrDefault(p => p.Id == od.ProductId).Name,
                             ImageUrl = _context.Products.FirstOrDefault(p => p.Id == od.ProductId).ImageUrl
                         }).ToList()
@@ -270,6 +277,100 @@ namespace CMS.Backend.Controllers
                 page,
                 pageSize
             });
+        }
+        public class CancelItemRequest
+        {
+            public int OrderDetailId { get; set; }
+            public string CancelReason { get; set; } = "";
+        }
+
+        /// <summary>
+        /// Admin hủy một sản phẩm trong đơn hàng vì không thể giao.
+        /// Hoàn trả tồn kho, cập nhật lại tổng tiền đơn, gửi email khách.
+        /// </summary>
+        [HttpPost("cancel-item")]
+        public async Task<IActionResult> CancelOrderItem([FromBody] CancelItemRequest request)
+        {
+            using var transaction = _context.Database.BeginTransaction();
+            try
+            {
+                // 1. Tìm chi tiết đơn hàng
+                var detail = _context.OrderDetails
+                    .Include(od => od.Order)
+                        .ThenInclude(o => o.Customer)
+                    .Include(od => od.Product)
+                    .FirstOrDefault(od => od.Id == request.OrderDetailId);
+
+                if (detail == null)
+                    return NotFound(new { message = "Không tìm thấy chi tiết đơn hàng." });
+
+                if (detail.Status == 1)
+                    return BadRequest(new { message = "Sản phẩm này đã bị hủy trước đó." });
+
+                // 2. Cập nhật trạng thái OrderDetail = Cancelled (1) + lưu lý do hủy
+                decimal refundAmount = detail.UnitPrice * detail.Quantity;
+                detail.Status = 1;
+                detail.CancelReason = request.CancelReason;
+
+                // 3. Hoàn trả tồn kho
+                if (detail.Product != null)
+                {
+                    detail.Product.StockQuantity += detail.Quantity;
+                }
+
+                _context.SaveChanges();
+                transaction.Commit();
+
+                // 4. Lấy email khách hàng từ Order.Customer
+                string? customerEmail = detail.Order?.Customer?.Email;
+                string customerName = detail.Order?.FullName
+                                      ?? detail.Order?.Customer?.FullName
+                                      ?? "Quý khách";
+                string productName = detail.Product?.Name ?? $"Sản phẩm #{detail.ProductId}";
+                int orderId = detail.OrderId;
+
+                // 5. Gửi email thông báo hủy sản phẩm
+                if (!string.IsNullOrEmpty(customerEmail))
+                {
+                    string subject = $"[MongNgan] Thông báo hủy sản phẩm trong đơn hàng #{orderId}";
+                    string body = $@"
+                        <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
+                            <div style='background-color: #306E51; padding: 20px; text-align: center;'>
+                                <h2 style='color: white; margin: 0;'>MongNgan Beauty</h2>
+                            </div>
+                            <div style='padding: 30px; background-color: #f9f9f9;'>
+                                <h3 style='color: #333;'>Xin chào {customerName},</h3>
+                                <p style='color: #555;'>Rất tiếc, chúng tôi cần thông báo rằng một sản phẩm trong đơn hàng <strong style='color: #306E51;'>#{orderId}</strong> của bạn không thể giao được.</p>
+                                <div style='background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; margin: 20px 0;'>
+                                    <p style='margin: 0 0 8px; color: #888; font-size: 13px;'>SẢN PHẨM BỊ HỦY</p>
+                                    <p style='margin: 0 0 6px; font-weight: bold; color: #333;'>{productName}</p>
+                                    <p style='margin: 0 0 6px; color: #555;'>Lý do: <span style='color: #dc2626;'>{request.CancelReason}</span></p>
+                                    <p style='margin: 0; color: #555;'>Số tiền hoàn lại: <strong style='color: #FF6600; font-size: 16px;'>{refundAmount:N0} ₫</strong></p>
+                                </div>
+                                <p style='color: #555;'>Số tiền <strong>{refundAmount:N0} ₫</strong> sẽ được hoàn lại vào phương thức thanh toán của bạn trong 3-5 ngày làm việc.</p>
+                                <p style='color: #555;'>Nếu có thắc mắc, vui lòng liên hệ chúng tôi qua email hoặc hotline.</p>
+                            </div>
+                            <div style='background-color: #f0f0f0; padding: 16px; text-align: center;'>
+                                <p style='margin: 0; font-size: 13px; color: #888;'>© 2025 MongNgan Beauty. All rights reserved.</p>
+                            </div>
+                        </div>";
+
+                    _ = _emailSender.SendEmailAsync(customerEmail, subject, body);
+                }
+
+                return Ok(new
+                {
+                    message = $"Đã hủy sản phẩm '{productName}'. Số tiền hoàn lại: {refundAmount:N0} ₫",
+                    refundAmount,
+                    productName,
+                    orderId
+                });
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                return StatusCode(500, new { message = "Lỗi khi hủy sản phẩm.", error = ex.Message });
+            }
         }
     }
 }

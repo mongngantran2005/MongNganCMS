@@ -25,7 +25,25 @@ MongNganCMS là một hệ thống Website thương mại điện tử hoàn ch�
 
 ---
 
-## 🚀 Những Cập Nhật Mới Nhất (Buổi 8)
+## 🚀 Những Cập Nhật Mới Nhất (Buổi 9)
+
+1. **Tối ưu hóa API sản phẩm mới nhất & bài viết mới nhất:**
+   - Tách riêng API chuyên dụng `GET /api/products/latest` thay vì tái sử dụng `GetAll`. Giải quyết rủi ro tải toàn bộ dữ liệu khi không truyền `limit`.
+   - Tách riêng API `GET /api/posts/latest` cho bài viết. Cả 2 đều là API đơn nhiệm (Single Responsibility), dễ tối ưu Cache/Index về sau.
+2. **Chức năng Hủy từng sản phẩm trong đơn hàng (Admin):**
+   - Admin có thể đánh dấu từng sản phẩm trong đơn là "Không thể giao".
+   - Hệ thống tự động: cập nhật `OrderDetail.Status = Cancelled`, lưu lý do hủy, hoàn trả số lượng tồn kho và tính lại tổng tiền đơn.
+   - Gửi **email HTML đẹp** thông báo đến khách hàng về sản phẩm bị hủy và số tiền hoàn lại.
+   - Entity `OrderDetail` được bổ sung 2 trường: `Status` và `CancelReason` (đã Migration).
+3. **Fix lỗi giỏ hàng không trống sau khi đặt hàng:**
+   - Phát hiện lỗi closure: hàm `removeFromCart` trong vòng lặp `forEach` đọc state cũ nên chỉ xóa 1 sản phẩm.
+   - Sửa bằng cách thay thế toàn bộ vòng lặp bằng `clearCart()` — xóa sạch giỏ hàng một lần duy nhất sau khi đặt hàng thành công.
+4. **Dọn dẹp giao diện trang Giỏ hàng:**
+   - Bỏ phần "Có thể bạn thích" dùng placeholder ảnh giả (SP1-SP6 cứng) không có dữ liệu thật.
+5. **Cải thiện thông báo kết quả tìm kiếm trống:**
+   - Thay icon "NOT FOUND" và nội dung cũ bằng thông báo thân thiện hơn: *"Rất tiếc, chúng tôi chưa có sản phẩm nào cho danh mục này."*
+
+## 🚀 Những Cập Nhật (Buổi 8)
 
 1. **Giao diện & Trải nghiệm Quản trị viên (Admin):**
    - Cố định Sidebar (`position: fixed`), bổ sung menu Accordion sổ xuống.
@@ -41,6 +59,7 @@ MongNganCMS là một hệ thống Website thương mại điện tử hoàn ch�
    - Xóa bỏ kiểu gửi link xác thực rườm rà. Nâng cấp lên gửi **Mã OTP 6 số** qua email, giúp trải nghiệm khôi phục mật khẩu liền mạch, hiện đại và bảo mật hơn rất nhiều.
 
 ---
+
 
 ## 🛠 Công Nghệ Sử Dụng (Tech Stack)
 

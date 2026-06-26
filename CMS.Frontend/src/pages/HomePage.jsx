@@ -5,8 +5,8 @@ import FeaturedProducts from '../components/Home/FeaturedProducts';
 import NewProducts from '../components/Home/NewProducts';
 import Promotion from '../components/Home/Promotion';
 import BlogSection from '../components/Home/BlogSection';
-import { getProducts, getCategories, getHotProducts } from '../services/productService';
-import { getPosts } from '../services/postService';
+import { getProducts, getCategories, getHotProducts, getLatestProducts } from '../services/productService';
+import { getPosts, getLatestPosts } from '../services/postService';
 import api from '../services/api';
 
 function HomePage() {
@@ -30,8 +30,8 @@ function HomePage() {
       .then(data => setCategories(data))
       .catch(console.error);
 
-    // Products
-    getProducts(6)
+    // Latest Products (Sản phẩm mới nhất)
+    getLatestProducts(6)
       .then(data => {
         setProducts(data);
         setLoadingProducts(false);
@@ -52,8 +52,8 @@ function HomePage() {
         setLoadingHotProducts(false);
       });
 
-    // Posts
-    getPosts(4)
+    // Latest Posts (Bài viết mới nhất)
+    getLatestPosts(4)
       .then(data => {
         setPosts(data);
         setLoadingPosts(false);

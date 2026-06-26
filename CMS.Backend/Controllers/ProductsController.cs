@@ -132,5 +132,23 @@ namespace CMS.Backend.Controllers
 
             return Ok(hotProducts);
         }
+        [HttpGet("latest")]
+        public IActionResult GetLatestProducts([FromQuery] int limit = 6)
+        {
+            var latestProducts = _context.Products
+                .OrderByDescending(p => p.Id)
+                .Take(limit)
+                .Select(p => new {
+                    p.Id,
+                    p.Name,
+                    p.Price,
+                    p.ImageUrl,
+                    p.StockQuantity,
+                    CategoryName = p.CategoryProduct != null ? p.CategoryProduct.Name : "Chưa phân loại"
+                })
+                .ToList();
+
+            return Ok(latestProducts);
+        }
     }
 }

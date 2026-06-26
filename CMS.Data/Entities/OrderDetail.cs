@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,7 +20,12 @@ namespace CMS.Data.Entities
         public int Quantity { get; set; }
 
         [Column(TypeName = "decimal(18,2)")]
-        public decimal UnitPrice { get; set; } // Giá tại thời điểm mua [cite: 252]
+        public decimal UnitPrice { get; set; } // Giá tại thời điểm mua
+
+        /// <summary>0: Bình thường, 1: Đã hủy (không thể giao)</summary>
+        public int Status { get; set; } = 0;
+
+        public string? CancelReason { get; set; }
 
         [ForeignKey("OrderId")]
         public virtual Order? Order { get; set; }

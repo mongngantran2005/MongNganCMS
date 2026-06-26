@@ -5,6 +5,9 @@ export const getProducts = (limit = null) => {
   return apiClient.get(url).then(r => r.data);
 };
 
+export const getLatestProducts = (limit = 6) =>
+  apiClient.get(`/products/latest?limit=${limit}`).then(r => r.data);
+
 export const getProductById = (id) => apiClient.get(`/products/${id}`).then(r => r.data);
 
 export const getProductsByCategory = (categoryId) =>

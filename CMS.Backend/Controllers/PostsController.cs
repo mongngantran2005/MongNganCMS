@@ -103,7 +103,29 @@ namespace CMS.Backend.Controllers
         }
 
         // =====================================================================
-        // PHẦN 4: API THÊM MỚI BÀI VIẾT (POST METHOD)
+        // PHẦN 4: API LẤY BÀI VIẾT MỚI NHẤT (LATEST POSTS)
+        // URL: GET https://localhost:xxxx/api/posts/latest
+        // =====================================================================
+        [HttpGet("latest")]
+        public IActionResult GetLatestPosts([FromQuery] int limit = 4)
+        {
+            var latestPosts = _context.Posts
+                .OrderByDescending(p => p.Id)
+                .Take(limit)
+                .Select(p => new {
+                    p.Id,
+                    p.Title,
+                    p.ImageUrl,
+                    CreatedAt = p.CreatedDate,
+                    CategoryName = p.Category != null ? p.Category.Name : "Chưa phân loại"
+                })
+                .ToList();
+
+            return Ok(latestPosts);
+        }
+
+        // =====================================================================
+        // PHẦN 5: API THÊM MỚI BÀI VIẾT (POST METHOD)
         // URL: POST https://localhost:xxxx/api/posts
         // =====================================================================
     //     [HttpPost]

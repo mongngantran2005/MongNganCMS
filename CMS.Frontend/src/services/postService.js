@@ -5,4 +5,7 @@ export const getPosts = (limit = null) => {
   return apiClient.get(url).then(r => r.data);
 };
 
+export const getLatestPosts = (limit = 4) =>
+  apiClient.get(`/posts/latest?limit=${limit}`).then(r => r.data);
+
 export const getPostById = (id) => apiClient.get(`/posts/${id}`).then(r => r.data);

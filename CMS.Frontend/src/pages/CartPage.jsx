@@ -98,39 +98,9 @@ function CartPage() {
               </div>
             </div>
 
-            {/* Có thể bạn thích */}
-            <div style={{ marginTop: '30px' }}>
-              <h3 style={{ fontSize: '15px', color: '#333', fontWeight: '700', marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                Có thể bạn thích <span style={{ color: '#FF6600', fontSize: '16px' }}>↻</span>
-              </h3>
-              <div style={{ display: 'flex', gap: '15px', overflowX: 'auto', paddingBottom: '20px' }}>
-                {[
-                  { price: '1.050K', old: '1.500K' },
-                  { price: '383K', old: '500K' },
-                  { price: '383K', old: '500K' },
-                  { price: '403K', old: '550K' },
-                  { price: '408K', old: '550K' },
-                  { price: '275K', old: '350K' },
-                ].map((item, i) => (
-                   <div key={i} style={{ width: '150px', flexShrink: 0, border: '1px solid #eee', borderRadius: '4px', padding: '0', overflow: 'hidden' }}>
-                      <div style={{ height: '150px', backgroundColor: '#f9f9f9', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <img src={`https://placehold.co/150x150?text=SP+${i+1}`} alt="" style={{ maxWidth: '100%', maxHeight: '100%' }} />
-                      </div>
-                      <div style={{ padding: '10px', backgroundColor: '#1d5e38' }}>
-                         <div style={{ display: 'flex', justifyContent: 'space-between', color: '#fff', fontSize: '11px', marginBottom: '5px' }}>
-                           <span style={{ textDecoration: 'line-through' }}>{item.old}</span>
-                           <span>24H</span>
-                         </div>
-                         <div style={{ color: '#fff', fontWeight: '700', fontSize: '14px', backgroundColor: '#d0021b', display: 'inline-block', padding: '2px 8px', borderRadius: '10px' }}>
-                           {item.price}
-                         </div>
-                      </div>
-                   </div>
-                ))}
-              </div>
-            </div>
           </>
         )}
+
       </div>
     </div>
   );

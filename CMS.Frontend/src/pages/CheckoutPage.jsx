@@ -11,7 +11,7 @@ import { getAddresses } from '../services/userService';
 
 function CheckoutPage() {
   const navigate = useNavigate();
-  const { removeFromCart } = useCart();
+  const { clearCart } = useCart();
   const [checkoutItems, setCheckoutItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
@@ -148,7 +148,7 @@ function CheckoutPage() {
 
     try {
       const res = await createOrder(orderData);
-      checkoutItems.forEach(i => removeFromCart(i.productId));
+      clearCart();
       sessionStorage.removeItem('checkoutItems');
       sessionStorage.removeItem('orderNotes');
       navigate('/order-success', { state: { orderId: res.id || Math.floor(Math.random() * 100000) } });
