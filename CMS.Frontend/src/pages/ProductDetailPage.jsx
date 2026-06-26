@@ -85,6 +85,31 @@ function ProductDetailPage() {
         .qty-btn:hover { background: #f0faf5 !important; }
         .cart-btn:hover { background: #f0faf5 !important; border-color: #326e51 !important; }
         .buy-btn:hover { background: #245239 !important; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(50,110,81,0.4) !important; }
+
+        /* ── CSS cho nội dung HTML từ CKEditor ── */
+        .ck-content-display { font-size: 15px; color: #444; line-height: 1.9; }
+        .ck-content-display h1,.ck-content-display h2,.ck-content-display h3,.ck-content-display h4 { color: #1a1a1a; font-weight: 700; margin: 1.2em 0 0.5em; line-height: 1.4; }
+        .ck-content-display h2 { font-size: 20px; border-bottom: 2px solid #f0f0f0; padding-bottom: 6px; }
+        .ck-content-display h3 { font-size: 17px; color: #326e51; }
+        .ck-content-display p { margin: 0 0 1em; }
+        .ck-content-display strong { color: #1a1a1a; font-weight: 700; }
+        .ck-content-display em { font-style: italic; }
+        .ck-content-display ul,.ck-content-display ol { padding-left: 1.5em; margin: 0.5em 0 1em; }
+        .ck-content-display li { margin-bottom: 0.4em; }
+        .ck-content-display blockquote { border-left: 4px solid #326e51; margin: 1em 0; padding: 12px 16px; background: #f0faf5; color: #555; font-style: italic; border-radius: 0 6px 6px 0; }
+        .ck-content-display img { max-width: 100%; height: auto; border-radius: 8px; margin: 12px 0; display: block; }
+        .ck-content-display figure.image { margin: 16px auto; text-align: center; }
+        .ck-content-display figure.image img { margin: 0 auto; }
+        .ck-content-display figure.image.image-style-side { float: right; margin: 0 0 16px 24px; max-width: 40%; }
+        .ck-content-display figure.image.image-style-inline { display: inline-block; margin: 4px 8px; }
+        .ck-content-display figcaption { font-size: 13px; color: #888; text-align: center; margin-top: 6px; }
+        .ck-content-display table { width: 100%; border-collapse: collapse; margin: 1em 0; font-size: 14px; }
+        .ck-content-display th,.ck-content-display td { border: 1px solid #e0e0e0; padding: 10px 14px; }
+        .ck-content-display th { background: #f8faf9; font-weight: 700; color: #333; }
+        .ck-content-display tr:nth-child(even) td { background: #fafafa; }
+        .ck-content-display a { color: #326e51; text-decoration: underline; }
+        .ck-content-display a:hover { color: #245239; }
+        .ck-content-display hr { border: none; border-top: 2px solid #f0f0f0; margin: 1.5em 0; }
       `}</style>
 
       {/* Breadcrumb */}
@@ -287,9 +312,12 @@ function ProductDetailPage() {
               {/* Tab content */}
               <div style={{ padding: '28px' }}>
                 {activeTab === 'description' && (
-                  <div style={{ fontSize: '15px', color: '#444', lineHeight: '1.9' }}>
+                  <div>
                     {product.description ? (
-                      <div style={{ whiteSpace: 'pre-line' }}>{product.description}</div>
+                      <div
+                        className="ck-content-display"
+                        dangerouslySetInnerHTML={{ __html: product.description }}
+                      />
                     ) : (
                       <div style={{ color: '#aaa', fontStyle: 'italic', textAlign: 'center', padding: '20px 0' }}>
                         Sản phẩm này chưa có mô tả.

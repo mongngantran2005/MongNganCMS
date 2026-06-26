@@ -16,7 +16,7 @@
                 </div>
             </div>
             <div class="card-body p-4">
-                <form asp-action="Create" method="post" enctype="multipart/form-data">
+                <form asp-action="Create" method="post" enctype="multipart/form-data" id="createPostForm">
                     <div asp-validation-summary="ModelOnly" class="alert alert-danger" style="display:none;"></div>
 
                     <div class="row">
@@ -28,10 +28,13 @@
                                 <span asp-validation-for="Title" class="text-danger small"></span>
                             </div>
 
-                            <!-- Nội dung Rich Editor -->
+                            <!-- Nội dung Rich Editor với CKEditor 5 hỗ trợ Upload Ảnh -->
                             <div class="mb-4">
-                                <label asp-for="Content" class="form-label fw-semibold text-secondary">Nội dung chi tiết</label>
-                                <textarea asp-for="Content" class="form-control" rows="12" placeholder="Nhập nội dung bài viết..."></textarea>
+                                <label asp-for="Content" class="form-label fw-semibold text-secondary">
+                                    Nội dung chi tiết
+                                    <small class="text-muted fw-normal">(Hỗ trợ chèn ảnh trực tiếp vào nội dung)</small>
+                                </label>
+                                <textarea asp-for="Content" id="Content" class="form-control" rows="12" placeholder="Nhập nội dung bài viết..."></textarea>
                                 <span asp-validation-for="Content" class="text-danger small"></span>
                             </div>
                         </div>
@@ -46,7 +49,7 @@
                                 <span asp-validation-for="CategoryId" class="text-danger small"></span>
                             </div>
 
-                            <!-- Upload ảnh -->
+                            <!-- Upload ảnh đại diện -->
                             <div class="mb-4">
                                 <label class="form-label fw-semibold text-secondary">Ảnh đại diện</label>
                                 <div class="border rounded p-3 text-center bg-light">
@@ -65,6 +68,14 @@
                                 <input asp-for="ImageUrl" class="form-control form-control-sm" placeholder="https://example.com/image.png" />
                                 <span asp-validation-for="ImageUrl" class="text-danger small"></span>
                             </div>
+
+                            <!-- Hướng dẫn chèn ảnh vào nội dung -->
+                            <div class="alert alert-info p-2 small">
+                                <i class="bi bi-info-circle me-1"></i>
+                                <strong>Chèn ảnh vào nội dung:</strong> Nhấn nút 
+                                <span class="badge bg-secondary"><i class="bi bi-image"></i> Insert Image</span>
+                                trên thanh công cụ CKEditor để tải ảnh lên và chèn trực tiếp vào bài viết.
+                            </div>
                         </div>
                     </div>
 
@@ -81,18 +92,125 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     
-    <!-- CKEditor 5 CDN -->
+    <!-- CKEditor 5 Classic Build từ CDN -->
     <script src="https://cdn.ckeditor.com/ckeditor5/41.1.0/classic/ckeditor.js"></script>
+
     <script>
+        // =====================================================================
+        // Custom Upload Adapter cho CKEditor 5
+        // Kết nối với API /api/upload/image theo chuẩn Simple Upload Adapter
+        // =====================================================================
+        class CustomUploadAdapter {
+            constructor(loader) {
+                this.loader = loader;
+            }
+
+            upload() {
+                return this.loader.file.then(file => new Promise((resolve, reject) => {
+                    const data = new FormData();
+                    data.append('upload', file);
+
+                    fetch('/api/upload/image', {
+                        method: 'POST',
+                        body: data,
+                        headers: {
+                            // Gửi kèm RequestVerificationToken để pass [Authorize]
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.url) {
+                            resolve({ default: result.url });
+                        } else if (result.error) {
+                            reject(result.error.message || 'Upload thất bại.');
+                        } else {
+                            reject('Phản hồi không hợp lệ từ server.');
+                        }
+                    })
+                    .catch(err => {
+                        reject('Lỗi kết nối khi upload ảnh: ' + err);
+                    });
+                }));
+            }
+
+            abort() {
+                // Không cần xử lý abort vì dùng fetch
+            }
+        }
+
+        // Plugin đăng ký CustomUploadAdapter vào CKEditor
+        function CustomUploadAdapterPlugin(editor) {
+            editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+                return new CustomUploadAdapter(loader);
+            };
+        }
+
+        // =====================================================================
+        // Khởi tạo CKEditor 5 với đầy đủ toolbar bao gồm Image Upload
+        // =====================================================================
+        let editorInstance;
         ClassicEditor
             .create(document.querySelector('#Content'), {
-                toolbar: [ 'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote', '|', 'undo', 'redo' ]
+                extraPlugins: [CustomUploadAdapterPlugin],
+                toolbar: {
+                    items: [
+                        'heading', '|',
+                        'bold', 'italic', 'underline', '|',
+                        'link', 'insertImage', '|',
+                        'bulletedList', 'numberedList', '|',
+                        'blockQuote', 'indent', 'outdent', '|',
+                        'insertTable', '|',
+                        'undo', 'redo'
+                    ]
+                },
+                image: {
+                    toolbar: [
+                        'imageTextAlternative',
+                        '|',
+                        'imageStyle:inline',
+                        'imageStyle:block',
+                        'imageStyle:side',
+                        '|',
+                        'resizeImage:25',
+                        'resizeImage:50',
+                        'resizeImage:75',
+                        'resizeImage:original',
+                        'resizeImage'
+                    ],
+                    resizeOptions: [
+                        { name: 'resizeImage:original', label: 'Gốc', value: null },
+                        { name: 'resizeImage:25',       label: '25%',  value: '25'  },
+                        { name: 'resizeImage:50',       label: '50%',  value: '50'  },
+                        { name: 'resizeImage:75',       label: '75%',  value: '75'  }
+                    ],
+                    resizeUnit: '%',
+                    upload: {
+                        types: ['jpeg', 'png', 'gif', 'bmp', 'webp']
+                    }
+                },
+                language: 'vi'
+            })
+            .then(editor => {
+                editorInstance = editor;
+                console.log('CKEditor 5 đã khởi tạo thành công với tính năng upload ảnh.');
             })
             .catch(error => {
-                console.error(error);
+                console.error('Lỗi khởi tạo CKEditor:', error);
             });
 
-        // Image Preview handler
+        // =====================================================================
+        // Đồng bộ nội dung CKEditor về textarea trước khi submit form
+        // =====================================================================
+        document.getElementById('createPostForm').addEventListener('submit', function () {
+            if (editorInstance) {
+                document.querySelector('#Content').value = editorInstance.getData();
+            }
+        });
+
+        // =====================================================================
+        // Image Preview handler cho ảnh đại diện
+        // =====================================================================
         document.getElementById('uploadImage').addEventListener('change', function(e) {
             const preview = document.getElementById('imagePreview');
             const placeholder = document.getElementById('imagePlaceholder');

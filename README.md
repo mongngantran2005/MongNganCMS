@@ -25,7 +25,63 @@ MongNganCMS là một hệ thống Website thương mại điện tử hoàn ch�
 
 ---
 
-## 🚀 Những Cập Nhật Mới Nhất (Buổi 9)
+## 🚀 Những Cập Nhật Mới Nhất (Buổi 10)
+
+1. **Tích hợp trình soạn thảo Rich Text (CKEditor 5) cho Bài viết & Sản phẩm:**
+   - Cấu hình CKEditor 5 (Classic Build) vào trang thêm/sửa bài viết và sản phẩm của hệ thống Quản trị (Admin).
+   - Xây dựng API `/api/upload/image` riêng biệt để tiếp nhận và xử lý ảnh do CKEditor tải lên theo chuẩn `SimpleUploadAdapter`.
+   - Bổ sung tính năng kéo thả thay đổi kích thước ảnh (resize tự do và theo tỷ lệ %) ngay trong trình soạn thảo.
+   - Render HTML chính xác trên giao diện Frontend bằng `dangerouslySetInnerHTML` kết hợp CSS tùy chỉnh.
+2. **Đồng bộ hóa giao diện trang Thêm/Sửa Sản Phẩm:**
+   - Thay đổi bố cục (layout) thành dạng lưới (grid) chia 2 cột rõ ràng (thông tin chính bên trái, cài đặt phụ bên phải), tối ưu hóa trải nghiệm nhập liệu cho Admin.
+   - Hỗ trợ xem trước (preview) ảnh đại diện tải lên ngay trên giao diện.
+
+### Chi tiết cấu trúc thư mục Frontend (`CMS.Frontend/src`)
+```text
+CMS.Frontend/src
+├── api.js
+├── App.css
+├── App.jsx
+├── index.css
+├── main.jsx
+├── assets/
+│   ├── hero.png
+│   ├── react.svg
+│   └── vite.svg
+├── components/
+│   ├── Footer.jsx
+│   ├── Navbar.css
+│   ├── Navbar.jsx
+│   ├── Auth/ (LoginForm, RegisterForm...)
+│   ├── Cart/ (CartItem, CartList, CartSummary...)
+│   ├── Checkout/ (AddressForm, OrderSummary...)
+│   ├── Common/ (Button, SearchBox, Loading...)
+│   ├── Home/ (Banner, CategorySection, FeaturedProducts...)
+│   ├── Post/ (PostCard, PostContent, PostList)
+│   ├── ProductDetail/ (ProductImage, ProductInfo, RelatedProducts...)
+│   ├── Products/ (ProductCard, ProductFilter, Pagination...)
+│   └── Profile/ (AddressBook...)
+├── context/
+│   ├── AuthContext.jsx
+│   └── CartContext.jsx
+├── hooks/
+│   ├── useCart.js
+│   └── useFetch.js
+├── pages/
+│   ├── CartPage.jsx, CheckoutPage.jsx, HomePage.jsx
+│   ├── LoginPage.jsx, RegisterPage.jsx, ProfilePage.jsx
+│   ├── ProductDetailPage.jsx, ProductsPage.jsx
+│   └── PostDetailPage.jsx, PostsPage.jsx...
+├── routes/
+│   └── AppRoutes.jsx
+└── services/
+    ├── api.js, orderService.js, postService.js
+    └── productService.js, userService.js
+```
+
+---
+
+## 🚀 Những Cập Nhật (Buổi 9)
 
 1. **Tối ưu hóa API sản phẩm mới nhất & bài viết mới nhất:**
    - Tách riêng API chuyên dụng `GET /api/products/latest` thay vì tái sử dụng `GetAll`. Giải quyết rủi ro tải toàn bộ dữ liệu khi không truyền `limit`.
