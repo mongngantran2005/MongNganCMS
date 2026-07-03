@@ -189,6 +189,6 @@ MongNganCMS_SOLUTION/
 2. Chạy lệnh:
    ```bash
    npm install
-   npm run dev
+   npm run start
    ```
 3. Truy cập `http://localhost:5173` để trải nghiệm ứng dụng người dùng. Trực tiếp vào cổng Backend (vd: `http://localhost:5188`) để truy cập trang Quản trị Admin.
